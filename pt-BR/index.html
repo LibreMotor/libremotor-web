@@ -3,100 +3,200 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Libremotor</title>
+    <meta
+      name="description"
+      content="Libremotor e um workspace open source para apps em centrais veiculares compativeis, com acesso verificado, builds reproduziveis e configuracao controlada pelo dono."
+    >
+    <title>Libremotor - Workspace de Apps Veiculares</title>
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="/pt-BR/">Libremotor</a>
-      <nav>
-        <a href="/">English</a>
+      <a class="brand" href="/pt-BR/" aria-label="Inicio Libremotor">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Libremotor</span>
+      </a>
+      <nav aria-label="Navegacao principal">
+        <a href="#workspace">Workspace</a>
+        <a href="#flow">Fluxo</a>
+        <a href="#access">Acesso</a>
         <a href="/terms/pt-BR/">Termos</a>
+        <a href="/">EN</a>
       </nav>
     </header>
 
     <main>
       <section class="hero">
-        <div>
-          <p class="eyebrow">Interoperabilidade veicular open source</p>
-          <h1>Ajuste, valide e gerencie apps compativeis para centrais veiculares.</h1>
+        <div class="hero-copy">
+          <p class="eyebrow">Beta privado para centrais veiculares compativeis</p>
+          <h1>Libremotor</h1>
           <p class="lead">
-            A Libremotor ajuda usuarios avancados a criar perfis de
-            compatibilidade reproduziveis, validar a ativacao do proprio veiculo
-            e manter o processo documentado.
+            Um workspace controlado para donos que querem builds reproduziveis,
+            ativacao verificada e uma forma mais limpa de gerenciar software
+            experimental no painel.
+          </p>
+          <div class="hero-actions" aria-label="Acoes principais">
+            <a class="button primary" href="#access">Solicitar acesso</a>
+            <a class="button secondary" href="#workspace">Explorar o workspace</a>
+          </div>
+        </div>
+
+        <div class="hero-scene" aria-hidden="true">
+          <div class="scene-topline"></div>
+          <div class="scene-card scene-card-left">
+            <span class="scene-label">Perfil</span>
+            <strong>Pronto</strong>
+            <span>Dono verificado</span>
+          </div>
+          <div class="scene-card scene-card-right">
+            <span class="scene-label">Build</span>
+            <strong>Assinado</strong>
+            <span>Saida reproduzivel</span>
+          </div>
+          <div class="road">
+            <span class="road-line road-line-a"></span>
+            <span class="road-line road-line-b"></span>
+            <span class="road-line road-line-c"></span>
+            <span class="road-pulse"></span>
+          </div>
+          <div class="console">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+
+        <div class="hero-status" aria-label="Status do projeto">
+          <span>Core open source</span>
+          <span>Dono verificado</span>
+          <span>Catalogo privado</span>
+        </div>
+      </section>
+
+      <section class="section intro" id="workspace">
+        <div class="section-heading">
+          <p class="eyebrow">Workspace</p>
+          <h2>Tudo aparece como uma prateleira de apps, mas e construido como um lab.</h2>
+          <p>
+            A Libremotor separa as escolhas do usuario dos detalhes tecnicos de
+            cada build. Escolha a capacidade, revise os termos e deixe as
+            ferramentas montarem o perfil certo.
           </p>
         </div>
-      </section>
 
-      <section class="band">
-        <div class="grid">
-          <article>
-            <h2>Ativacao</h2>
-            <p>
-              A elegibilidade do veiculo e verificada no servidor usando uma
-              identidade derivada do VIN, vinculando os builds ao usuario que
-              solicitou suporte.
-            </p>
+        <div class="app-grid">
+          <article class="app-tile">
+            <span class="app-icon hub" aria-hidden="true"></span>
+            <div>
+              <h3>Hub</h3>
+              <p>Um lugar para ativacao, escolha de perfil, recuperacao e status.</p>
+            </div>
+            <span class="tile-tag">Obrigatorio</span>
           </article>
-          <article>
-            <h2>Perfis</h2>
-            <p>
-              Escolha perfis praticos como video sem login, video com login,
-              navegacao ou projecao do telefone. O Hub cuida dos detalhes
-              tecnicos.
-            </p>
+          <article class="app-tile">
+            <span class="app-icon video" aria-hidden="true"></span>
+            <div>
+              <h3>Perfis de video</h3>
+              <p>Escolha reproducao com login ou como convidado conforme o seu setup.</p>
+            </div>
+            <span class="tile-tag">Opcional</span>
           </article>
-          <article>
-            <h2>Patches reproduziveis</h2>
-            <p>
-              As receitas declaram versoes de origem suportadas, patches
-              aplicados, metadados de saida e passos de verificacao.
-            </p>
+          <article class="app-tile">
+            <span class="app-icon maps" aria-hidden="true"></span>
+            <div>
+              <h3>Perfis de navegacao</h3>
+              <p>Teste builds de navegacao compativeis sem misturar com fluxos de midia.</p>
+            </div>
+            <span class="tile-tag">Opcional</span>
+          </article>
+          <article class="app-tile">
+            <span class="app-icon bridge" aria-hidden="true"></span>
+            <div>
+              <h3>Ponte de projecao</h3>
+              <p>Rode uma experiencia assistida pelo telefone em um pacote controlado.</p>
+            </div>
+            <span class="tile-tag">Avancado</span>
+          </article>
+          <article class="app-tile">
+            <span class="app-icon builder" aria-hidden="true"></span>
+            <div>
+              <h3>Construtor de receitas</h3>
+              <p>Importe arquivos, aplique receitas, verifique metadados e exporte.</p>
+            </div>
+            <span class="tile-tag">Local first</span>
+          </article>
+          <article class="app-tile">
+            <span class="app-icon safety" aria-hidden="true"></span>
+            <div>
+              <h3>Faixa de recuperacao</h3>
+              <p>Mantenha um caminho previsivel de volta quando um perfil precisa trocar.</p>
+            </div>
+            <span class="tile-tag">Incluido</span>
           </article>
         </div>
       </section>
 
-      <section class="content">
-        <h2>Como usar a Libremotor</h2>
-        <ol class="steps">
+      <section class="section flow-section" id="flow">
+        <div class="section-heading compact">
+          <p class="eyebrow">Como funciona</p>
+          <h2>Escolhas claras, saida repetivel.</h2>
+        </div>
+        <ol class="flow">
           <li>
-            Instale o app Hub na central veicular e aceite os termos atuais da
-            Libremotor.
+            <span class="step-index">01</span>
+            <h3>Solicite acesso</h3>
+            <p>Envie os detalhes de compatibilidade necessarios para a revisao beta.</p>
           </li>
           <li>
-            Informe o VIN do veiculo no Hub. O servico de ativacao verifica a
-            elegibilidade e retorna um token de ativacao temporario.
+            <span class="step-index">02</span>
+            <h3>Ative o Hub</h3>
+            <p>O Hub checa elegibilidade e mantem as escolhas vinculadas ao dono.</p>
           </li>
           <li>
-            Escolha o perfil desejado: video sem login, video com login,
-            navegacao ou projecao do telefone.
+            <span class="step-index">03</span>
+            <h3>Escolha um perfil</h3>
+            <p>Selecione navegacao, video, projecao ou um setup menor de recuperacao.</p>
           </li>
           <li>
-            Use o Libremotor Manager para importar seus proprios APKs de origem,
-            aplicar a receita correspondente, verificar a saida e exportar os
-            APKs recompilados.
-          </li>
-          <li>
-            Instale apenas os APKs gerados para o perfil selecionado e mantenha
-            o Hub instalado para ativacao, escolha de perfil e recuperacao.
+            <span class="step-index">04</span>
+            <h3>Compile e verifique</h3>
+            <p>Receitas produzem APKs assinados com checagens contra saidas incorretas.</p>
           </li>
         </ol>
       </section>
 
-      <section class="content">
-        <h2>Antes de comecar</h2>
-        <p>
-          A Libremotor modifica APKs para testes de interoperabilidade. Isso
-          pode afetar contas, garantia, estabilidade, comportamento dos apps e
-          suporte do veiculo. Leia e aceite os termos antes de usar recursos
-          avancados de patch.
-        </p>
-        <p>
-          O software e open source e experimental. Ele nao e afiliado a
-          fabricantes de veiculos, Google, YouTube, Waze, ReVanced ou
-          OpenAutoLink, exceto quando um repositorio especifico declarar o
-          contrario.
-        </p>
+      <section class="section split" id="access">
+        <div class="access-copy">
+          <p class="eyebrow">Beta privado</p>
+          <h2>Feito para donos cuidadosos, nao para instalacoes casuais.</h2>
+          <p>
+            A Libremotor e software experimental para hardware do proprio
+            usuario. O beta atual foca em instalacoes guiadas, termos
+            explicitos e fluxos reversiveis antes de uma abertura maior.
+          </p>
+          <div class="access-actions">
+            <a class="button primary" href="mailto:access@libremotor.com?subject=Acesso%20ao%20beta%20Libremotor">Solicitar beta</a>
+            <a class="button secondary" href="/terms/pt-BR/">Ler os termos</a>
+          </div>
+        </div>
+        <div class="status-panel" aria-label="Checklist beta da Libremotor">
+          <div>
+            <span>01</span>
+            <strong>Aprovacao do dono</strong>
+            <p>A ativacao e checada no servidor antes dos fluxos avancados.</p>
+          </div>
+          <div>
+            <span>02</span>
+            <strong>Receitas conhecidas</strong>
+            <p>Builds usam versoes declaradas, lista de patches e verificacoes.</p>
+          </div>
+          <div>
+            <span>03</span>
+            <strong>Uso responsavel</strong>
+            <p>Usuarios aceitam riscos sobre contas, garantia, estabilidade e seguranca.</p>
+          </div>
+        </div>
       </section>
     </main>
 

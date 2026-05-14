@@ -3,97 +3,200 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Libremotor</title>
+    <meta
+      name="description"
+      content="Libremotor is an open-source app workspace for compatible vehicle displays, with verified access, reproducible builds, and owner-controlled setup."
+    >
+    <title>Libremotor - Vehicle App Workspace</title>
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="/">Libremotor</a>
-      <nav>
-        <a href="/pt-BR/">Portugues</a>
+      <a class="brand" href="/" aria-label="Libremotor home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Libremotor</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#workspace">Workspace</a>
+        <a href="#flow">Flow</a>
+        <a href="#access">Access</a>
         <a href="/terms/">Terms</a>
+        <a href="/pt-BR/">PT</a>
       </nav>
     </header>
 
     <main>
       <section class="hero">
-        <div>
-          <p class="eyebrow">Open-source vehicle software interoperability</p>
-          <h1>Patch, validate, and manage compatible in-car apps.</h1>
+        <div class="hero-copy">
+          <p class="eyebrow">Private beta for compatible vehicle displays</p>
+          <h1>Libremotor</h1>
           <p class="lead">
-            Libremotor helps advanced users build reproducible APK compatibility
-            profiles, validate activation for their own vehicle, and keep the
-            process documented.
+            A controlled app workspace for owners who want reproducible builds,
+            verified activation, and a cleaner way to manage experimental
+            dashboard software.
+          </p>
+          <div class="hero-actions" aria-label="Primary actions">
+            <a class="button primary" href="#access">Request access</a>
+            <a class="button secondary" href="#workspace">Explore the workspace</a>
+          </div>
+        </div>
+
+        <div class="hero-scene" aria-hidden="true">
+          <div class="scene-topline"></div>
+          <div class="scene-card scene-card-left">
+            <span class="scene-label">Profile</span>
+            <strong>Ready</strong>
+            <span>Verified owner</span>
+          </div>
+          <div class="scene-card scene-card-right">
+            <span class="scene-label">Build</span>
+            <strong>Signed</strong>
+            <span>Reproducible output</span>
+          </div>
+          <div class="road">
+            <span class="road-line road-line-a"></span>
+            <span class="road-line road-line-b"></span>
+            <span class="road-line road-line-c"></span>
+            <span class="road-pulse"></span>
+          </div>
+          <div class="console">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+
+        <div class="hero-status" aria-label="Project status">
+          <span>Open source core</span>
+          <span>Owner verified</span>
+          <span>Private catalog</span>
+        </div>
+      </section>
+
+      <section class="section intro" id="workspace">
+        <div class="section-heading">
+          <p class="eyebrow">Workspace</p>
+          <h2>Everything is presented like an app shelf, but built like a lab.</h2>
+          <p>
+            Libremotor separates user choices from the technical details behind
+            each build. Pick the capability you need, review the terms, and let
+            the tooling assemble the matching profile.
           </p>
         </div>
-      </section>
 
-      <section class="band">
-        <div class="grid">
-          <article>
-            <h2>Activation</h2>
-            <p>
-              Vehicle eligibility is checked server-side using a VIN-derived
-              identity so builds are tied to the owner who requested support.
-            </p>
+        <div class="app-grid">
+          <article class="app-tile">
+            <span class="app-icon hub" aria-hidden="true"></span>
+            <div>
+              <h3>Hub</h3>
+              <p>One place for activation, profile selection, recovery, and status.</p>
+            </div>
+            <span class="tile-tag">Required</span>
           </article>
-          <article>
-            <h2>Profiles</h2>
-            <p>
-              Choose practical profiles such as guest video, signed-in video,
-              navigation, or phone projection. The Hub handles technical
-              placement details.
-            </p>
+          <article class="app-tile">
+            <span class="app-icon video" aria-hidden="true"></span>
+            <div>
+              <h3>Video profiles</h3>
+              <p>Choose signed-in or guest playback depending on the setup you want.</p>
+            </div>
+            <span class="tile-tag">Optional</span>
           </article>
-          <article>
-            <h2>Reproducible patches</h2>
-            <p>
-              Recipes declare supported source versions, applied patches, output
-              metadata, and verification steps.
-            </p>
+          <article class="app-tile">
+            <span class="app-icon maps" aria-hidden="true"></span>
+            <div>
+              <h3>Navigation profiles</h3>
+              <p>Test compatible navigation builds without mixing them into media flows.</p>
+            </div>
+            <span class="tile-tag">Optional</span>
+          </article>
+          <article class="app-tile">
+            <span class="app-icon bridge" aria-hidden="true"></span>
+            <div>
+              <h3>Projection bridge</h3>
+              <p>Run a phone-assisted dashboard experience from a controlled package.</p>
+            </div>
+            <span class="tile-tag">Advanced</span>
+          </article>
+          <article class="app-tile">
+            <span class="app-icon builder" aria-hidden="true"></span>
+            <div>
+              <h3>Recipe builder</h3>
+              <p>Import source files, apply known recipes, verify metadata, and export.</p>
+            </div>
+            <span class="tile-tag">Local first</span>
+          </article>
+          <article class="app-tile">
+            <span class="app-icon safety" aria-hidden="true"></span>
+            <div>
+              <h3>Recovery lane</h3>
+              <p>Keep a predictable path back when a profile needs to be replaced.</p>
+            </div>
+            <span class="tile-tag">Built in</span>
           </article>
         </div>
       </section>
 
-      <section class="content">
-        <h2>How to use Libremotor</h2>
-        <ol class="steps">
+      <section class="section flow-section" id="flow">
+        <div class="section-heading compact">
+          <p class="eyebrow">How it works</p>
+          <h2>Clear choices, repeatable output.</h2>
+        </div>
+        <ol class="flow">
           <li>
-            Install the Hub app on the head unit and accept the current
-            Libremotor terms.
+            <span class="step-index">01</span>
+            <h3>Request access</h3>
+            <p>Share the compatibility details needed for a private beta review.</p>
           </li>
           <li>
-            Enter the vehicle VIN in the Hub. The activation service checks
-            eligibility and returns a short-lived activation token.
+            <span class="step-index">02</span>
+            <h3>Activate the Hub</h3>
+            <p>The Hub checks eligibility and keeps profile choices tied to the owner.</p>
           </li>
           <li>
-            Choose the profile you want: video without sign-in, video with
-            sign-in, navigation, or phone projection.
+            <span class="step-index">03</span>
+            <h3>Pick a profile</h3>
+            <p>Select navigation, video, projection, or a smaller recovery-focused setup.</p>
           </li>
           <li>
-            Use the Libremotor Manager to import your own source APKs, apply
-            the matching recipe, verify the output, and export the rebuilt APKs.
-          </li>
-          <li>
-            Install only the generated APKs that match the selected profile and
-            keep the Hub installed for activation, profile selection, and
-            recovery.
+            <span class="step-index">04</span>
+            <h3>Build and verify</h3>
+            <p>Recipes produce signed APKs with checks that catch mismatched outputs.</p>
           </li>
         </ol>
       </section>
 
-      <section class="content">
-        <h2>Before you start</h2>
-        <p>
-          Libremotor modifies APKs for interoperability testing. That can affect
-          accounts, warranties, stability, app behavior, and vehicle support.
-          Read and accept the terms before using advanced patching features.
-        </p>
-        <p>
-          The software is open source and experimental. It is not affiliated with
-          any vehicle manufacturer, Google, YouTube, Waze, ReVanced, or
-          OpenAutoLink unless a specific repository states otherwise.
-        </p>
+      <section class="section split" id="access">
+        <div class="access-copy">
+          <p class="eyebrow">Private beta</p>
+          <h2>Built for careful owners, not casual installs.</h2>
+          <p>
+            Libremotor is experimental software for user-owned hardware. The
+            current beta focuses on guided installs, explicit terms, and
+            reversible workflows before wider release.
+          </p>
+          <div class="access-actions">
+            <a class="button primary" href="mailto:access@libremotor.com?subject=Libremotor%20private%20beta">Request beta access</a>
+            <a class="button secondary" href="/terms/">Read the terms</a>
+          </div>
+        </div>
+        <div class="status-panel" aria-label="Libremotor beta checklist">
+          <div>
+            <span>01</span>
+            <strong>Owner approval</strong>
+            <p>Activation is checked server-side before advanced workflows run.</p>
+          </div>
+          <div>
+            <span>02</span>
+            <strong>Known recipes</strong>
+            <p>Builds use declared source versions, patch lists, and verification steps.</p>
+          </div>
+          <div>
+            <span>03</span>
+            <strong>Responsible use</strong>
+            <p>Users accept the risks around accounts, warranty, stability, and safety.</p>
+          </div>
+        </div>
       </section>
     </main>
 
