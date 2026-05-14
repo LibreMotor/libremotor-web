@@ -22,8 +22,8 @@ The repo is prepared for GitHub Pages:
 - `.github/workflows/pages.yml` publishes the static directory from `main`.
 - `robots.txt` and `sitemap.xml` describe the public pages.
 
-DNS still needs to point `libremotor.com` at GitHub Pages before the custom
-domain is live.
+DNS points `libremotor.com` at GitHub Pages through Cloudflare. Cloudflare is
+the user-facing TLS edge while GitHub Pages manages the static origin.
 
 ## Cloudflare cutover
 
@@ -35,7 +35,9 @@ When a valid Cloudflare token is available, apply the DNS records with:
 
 The script reads `LIBREMOTOR_CLOUDFLARE_TOKEN` or `CLOUDFLARE_TOKEN` from the
 environment first, then from `/home/sabino/code/sabino/labs/azure-improvements/.env`.
-It creates DNS-only GitHub Pages records for the apex domain and `www`.
+It creates proxied GitHub Pages records for the apex domain and `www` by
+default. Set `PROXIED=false` only when intentionally switching back to DNS-only
+records for GitHub-managed certificate issuance.
 
 The token must be a Cloudflare API token with `Zone:Read` and `DNS:Edit`
 permissions for the `libremotor.com` zone.
@@ -44,4 +46,10 @@ Use a dry run to preview the record changes:
 
 ```sh
 DRY_RUN=1 ./scripts/configure-cloudflare-pages.sh
+```
+
+Apply proxied records:
+
+```sh
+PROXIED=true ./scripts/configure-cloudflare-pages.sh
 ```

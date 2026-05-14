@@ -5,6 +5,7 @@ DOMAIN="${DOMAIN:-libremotor.com}"
 PAGES_HOST="${PAGES_HOST:-libremotor.github.io}"
 ENV_FILE="${ENV_FILE:-/home/sabino/code/sabino/labs/azure-improvements/.env}"
 DRY_RUN="${DRY_RUN:-0}"
+PROXIED="${PROXIED:-true}"
 CLOUDFLARE_TOKEN_SOURCE=""
 CLOUDFLARE_ACCOUNT_ID_SOURCE=""
 
@@ -172,18 +173,29 @@ create_record() {
   local content="$4"
   local data
 
+  case "$PROXIED" in
+    true|false) ;;
+    1) PROXIED=true ;;
+    0) PROXIED=false ;;
+    *)
+      echo "PROXIED must be true, false, 1, or 0" >&2
+      exit 1
+      ;;
+  esac
+
   data="$(
     jq -nc \
       --arg type "$type" \
       --arg name "$name" \
       --arg content "$content" \
-      '{type:$type,name:$name,content:$content,ttl:1,proxied:false}'
+      --argjson proxied "$PROXIED" \
+      '{type:$type,name:$name,content:$content,ttl:1,proxied:$proxied}'
   )"
 
   if [[ "$DRY_RUN" == "1" ]]; then
-    echo "dry-run: create ${type} ${name} -> ${content}"
+    echo "dry-run: create ${type} ${name} -> ${content} proxied=${PROXIED}"
   else
-    echo "create ${type} ${name} -> ${content}"
+    echo "create ${type} ${name} -> ${content} proxied=${PROXIED}"
     cloudflare POST "/zones/${zone_id}/dns_records" "$data" >/dev/null
   fi
 }
@@ -192,12 +204,12 @@ main() {
   need curl
   need jq
 
-	  extract_token
-	  extract_account_id
+  extract_token
+  extract_account_id
 
-	  echo "verifying Cloudflare token"
-	  echo "using Cloudflare token source: ${CLOUDFLARE_TOKEN_SOURCE}"
-	  verify_token
+  echo "verifying Cloudflare token"
+  echo "using Cloudflare token source: ${CLOUDFLARE_TOKEN_SOURCE}"
+  verify_token
 
   zone_id="$(
     cloudflare GET "/zones?name=${DOMAIN}" |
@@ -227,8 +239,12 @@ main() {
   create_record "$zone_id" CNAME "www.${DOMAIN}" "$PAGES_HOST"
 
   echo "done"
-  echo "After DNS resolves, enable HTTPS in GitHub Pages:"
-  echo "gh api --method PUT repos/LibreMotor/libremotor-web/pages -f cname=${DOMAIN} -F https_enforced=true"
+  if [[ "$PROXIED" == "true" ]]; then
+    echo "Cloudflare proxy is enabled; user-facing HTTPS is served by Cloudflare."
+  else
+    echo "After DNS resolves, enable HTTPS in GitHub Pages:"
+    echo "gh api --method PUT repos/LibreMotor/libremotor-web/pages -f cname=${DOMAIN} -F https_enforced=true"
+  fi
 }
 
 main "$@"
