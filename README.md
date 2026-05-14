@@ -37,6 +37,9 @@ The script reads `CLOUDFLARE_TOKEN` from the environment first, then from
 `/home/sabino/code/sabino/labs/azure-improvements/.env`. It creates DNS-only
 GitHub Pages records for the apex domain and `www`.
 
+The token must be a Cloudflare API token with `Zone:Read` and `DNS:Edit`
+permissions for the `libremotor.com` zone.
+
 Use a dry run to preview the record changes:
 
 ```sh
