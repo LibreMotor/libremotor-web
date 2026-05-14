@@ -33,9 +33,9 @@ When a valid Cloudflare token is available, apply the DNS records with:
 ./scripts/configure-cloudflare-pages.sh
 ```
 
-The script reads `CLOUDFLARE_TOKEN` from the environment first, then from
-`/home/sabino/code/sabino/labs/azure-improvements/.env`. It creates DNS-only
-GitHub Pages records for the apex domain and `www`.
+The script reads `LIBREMOTOR_CLOUDFLARE_TOKEN` or `CLOUDFLARE_TOKEN` from the
+environment first, then from `/home/sabino/code/sabino/labs/azure-improvements/.env`.
+It creates DNS-only GitHub Pages records for the apex domain and `www`.
 
 The token must be a Cloudflare API token with `Zone:Read` and `DNS:Edit`
 permissions for the `libremotor.com` zone.

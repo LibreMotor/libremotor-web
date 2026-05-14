@@ -5,6 +5,8 @@ DOMAIN="${DOMAIN:-libremotor.com}"
 PAGES_HOST="${PAGES_HOST:-libremotor.github.io}"
 ENV_FILE="${ENV_FILE:-/home/sabino/code/sabino/labs/azure-improvements/.env}"
 DRY_RUN="${DRY_RUN:-0}"
+CLOUDFLARE_TOKEN_SOURCE=""
+CLOUDFLARE_ACCOUNT_ID_SOURCE=""
 
 GITHUB_PAGES_A=(
   "185.199.108.153"
@@ -47,38 +49,94 @@ cloudflare() {
   fi
 }
 
+env_value() {
+  local key="$1"
+  awk -F= -v key="$key" '
+    $0 ~ "^[[:space:]]*" key "=" {
+      line=$0
+      sub("^[[:space:]]*" key "=", "", line)
+      print line
+    }
+  ' "$ENV_FILE" | tail -n 1
+}
+
+clean_secret() {
+  local value="$1"
+  value="${value%$'\r'}"
+  value="${value#\"}"
+  value="${value%\"}"
+  value="${value#\'}"
+  value="${value%\'}"
+  printf '%s' "$value"
+}
+
 extract_token() {
+  if [[ -n "${LIBREMOTOR_CLOUDFLARE_TOKEN:-}" ]]; then
+    CLOUDFLARE_TOKEN="$LIBREMOTOR_CLOUDFLARE_TOKEN"
+    CLOUDFLARE_TOKEN_SOURCE="env:LIBREMOTOR_CLOUDFLARE_TOKEN"
+    export CLOUDFLARE_TOKEN
+    return
+  fi
+
   if [[ -n "${CLOUDFLARE_TOKEN:-}" ]]; then
+    CLOUDFLARE_TOKEN_SOURCE="env:CLOUDFLARE_TOKEN"
     return
   fi
 
   if [[ ! -f "$ENV_FILE" ]]; then
-    echo "CLOUDFLARE_TOKEN is unset and ENV_FILE does not exist: $ENV_FILE" >&2
+    echo "Cloudflare token is unset and ENV_FILE does not exist: $ENV_FILE" >&2
     exit 1
   fi
 
-  CLOUDFLARE_TOKEN="$(
-    awk -F= '
-      /^[[:space:]]*CLOUDFLARE_TOKEN=/ {
-        line=$0
-        sub(/^[[:space:]]*CLOUDFLARE_TOKEN=/, "", line)
-        print line
-      }
-    ' "$ENV_FILE" | tail -n 1
-  )"
+  CLOUDFLARE_TOKEN="$(env_value LIBREMOTOR_CLOUDFLARE_TOKEN)"
+  CLOUDFLARE_TOKEN_SOURCE="${ENV_FILE}:LIBREMOTOR_CLOUDFLARE_TOKEN"
+  if [[ -z "$CLOUDFLARE_TOKEN" ]]; then
+    CLOUDFLARE_TOKEN="$(env_value CLOUDFLARE_TOKEN)"
+    CLOUDFLARE_TOKEN_SOURCE="${ENV_FILE}:CLOUDFLARE_TOKEN"
+  fi
 
   if [[ -z "$CLOUDFLARE_TOKEN" ]]; then
-    echo "CLOUDFLARE_TOKEN was not found in $ENV_FILE" >&2
+    echo "Cloudflare token was not found in $ENV_FILE" >&2
     exit 1
   fi
 
-  CLOUDFLARE_TOKEN="${CLOUDFLARE_TOKEN%$'\r'}"
-  CLOUDFLARE_TOKEN="${CLOUDFLARE_TOKEN#\"}"
-  CLOUDFLARE_TOKEN="${CLOUDFLARE_TOKEN%\"}"
-  CLOUDFLARE_TOKEN="${CLOUDFLARE_TOKEN#\'}"
-  CLOUDFLARE_TOKEN="${CLOUDFLARE_TOKEN%\'}"
-
+  CLOUDFLARE_TOKEN="$(clean_secret "$CLOUDFLARE_TOKEN")"
   export CLOUDFLARE_TOKEN
+}
+
+extract_account_id() {
+  if [[ -n "${LIBREMOTOR_CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
+    CLOUDFLARE_ACCOUNT_ID="$LIBREMOTOR_CLOUDFLARE_ACCOUNT_ID"
+    CLOUDFLARE_ACCOUNT_ID_SOURCE="env:LIBREMOTOR_CLOUDFLARE_ACCOUNT_ID"
+    export CLOUDFLARE_ACCOUNT_ID
+    return
+  fi
+
+  if [[ -n "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
+    CLOUDFLARE_ACCOUNT_ID_SOURCE="env:CLOUDFLARE_ACCOUNT_ID"
+    return
+  fi
+
+  if [[ -f "$ENV_FILE" ]]; then
+    CLOUDFLARE_ACCOUNT_ID="$(env_value LIBREMOTOR_CLOUDFLARE_ACCOUNT_ID)"
+    CLOUDFLARE_ACCOUNT_ID_SOURCE="${ENV_FILE}:LIBREMOTOR_CLOUDFLARE_ACCOUNT_ID"
+    if [[ -z "$CLOUDFLARE_ACCOUNT_ID" ]]; then
+      CLOUDFLARE_ACCOUNT_ID="$(env_value CLOUDFLARE_ACCOUNT_ID)"
+      CLOUDFLARE_ACCOUNT_ID_SOURCE="${ENV_FILE}:CLOUDFLARE_ACCOUNT_ID"
+    fi
+  fi
+
+  CLOUDFLARE_ACCOUNT_ID="$(clean_secret "${CLOUDFLARE_ACCOUNT_ID:-}")"
+  export CLOUDFLARE_ACCOUNT_ID
+}
+
+verify_token() {
+  if [[ -n "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
+    echo "using Cloudflare account id source: ${CLOUDFLARE_ACCOUNT_ID_SOURCE}"
+    cloudflare GET "/accounts/${CLOUDFLARE_ACCOUNT_ID}/tokens/verify" | jq -e '.success == true' >/dev/null
+  else
+    cloudflare GET "/user/tokens/verify" | jq -e '.success == true' >/dev/null
+  fi
 }
 
 record_ids() {
@@ -134,10 +192,12 @@ main() {
   need curl
   need jq
 
-  extract_token
+	  extract_token
+	  extract_account_id
 
-  echo "verifying Cloudflare token"
-  cloudflare GET "/user/tokens/verify" | jq -e '.success == true' >/dev/null
+	  echo "verifying Cloudflare token"
+	  echo "using Cloudflare token source: ${CLOUDFLARE_TOKEN_SOURCE}"
+	  verify_token
 
   zone_id="$(
     cloudflare GET "/zones?name=${DOMAIN}" |
