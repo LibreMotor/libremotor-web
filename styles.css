@@ -122,27 +122,71 @@ footer a:hover {
 }
 
 .hero {
-  display: grid;
-  gap: clamp(36px, 5vw, 82px);
-  grid-template-columns: minmax(0, 0.86fr) minmax(420px, 1fr);
+  align-items: center;
+  background:
+    radial-gradient(circle at 54% 48%, rgba(52, 255, 98, 0.22), transparent 24%),
+    linear-gradient(90deg, rgba(3, 7, 4, 0.96) 0%, rgba(3, 7, 4, 0.68) 38%, rgba(3, 7, 4, 0.46) 55%, rgba(3, 7, 4, 0.76) 100%);
+  display: flex;
   min-height: calc(100vh - 70px);
   overflow: hidden;
-  padding: clamp(48px, 7vw, 98px) clamp(18px, 5vw, 72px) 34px;
+  padding: 72px clamp(18px, 5vw, 72px) 56px;
   position: relative;
+  isolation: isolate;
 }
 
 .hero::before {
-  background:
-    radial-gradient(circle at 50% 50%, rgba(52, 255, 98, 0.26), transparent 58%),
-    linear-gradient(90deg, rgba(52, 255, 98, 0.08), transparent 45%);
+  background-image:
+    linear-gradient(180deg, rgba(3, 7, 4, 0.84) 0%, transparent 18%, transparent 82%, rgba(3, 7, 4, 0.9) 100%),
+    linear-gradient(90deg, rgba(3, 7, 4, 0.12), rgba(3, 7, 4, 0.58) 68%, rgba(3, 7, 4, 0.98)),
+    url("/assets/media/libremotor-cabin.jpg");
+  background-position: center, center, center left;
+  background-repeat: no-repeat;
+  background-size: cover, cover, auto 108%;
   content: "";
-  filter: blur(40px);
-  inset: 10% -16% 5% 48%;
+  filter: saturate(1.04) contrast(1.05);
+  inset: 0;
+  mask-composite: intersect;
+  mask-image:
+    linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.96) 34%, rgba(0, 0, 0, 0.42) 61%, transparent 78%),
+    linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+  opacity: 0.74;
   position: absolute;
+  transform: none;
+  transform-origin: center left;
+  z-index: -3;
+  -webkit-mask-composite: source-in;
+  -webkit-mask-image:
+    linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.96) 34%, rgba(0, 0, 0, 0.42) 61%, transparent 78%),
+    linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+}
+
+.hero::after {
+  background-image:
+    linear-gradient(180deg, rgba(3, 7, 4, 0.94) 0%, transparent 17%, transparent 82%, rgba(3, 7, 4, 0.98) 100%),
+    linear-gradient(270deg, rgba(3, 7, 4, 0.1), rgba(3, 7, 4, 0.5) 58%, rgba(3, 7, 4, 0.98)),
+    url("/assets/media/headunit-soft.png");
+  background-position: center, center, center right;
+  background-repeat: no-repeat;
+  background-size: cover, cover, auto 82%;
+  content: "";
+  filter: saturate(1.08) contrast(0.98);
+  inset: 0;
+  mask-composite: intersect;
+  mask-image:
+    linear-gradient(270deg, #000 0%, rgba(0, 0, 0, 0.98) 36%, rgba(0, 0, 0, 0.38) 64%, transparent 80%),
+    linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  opacity: 0.7;
+  position: absolute;
+  transform: none;
+  transform-origin: center right;
+  z-index: -4;
+  -webkit-mask-composite: source-in;
+  -webkit-mask-image:
+    linear-gradient(270deg, #000 0%, rgba(0, 0, 0, 0.98) 36%, rgba(0, 0, 0, 0.38) 64%, transparent 80%),
+    linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
 }
 
 .hero-copy,
-.hero-visual,
 .section,
 footer {
   position: relative;
@@ -150,8 +194,19 @@ footer {
 }
 
 .hero-copy {
-  align-self: center;
-  max-width: 780px;
+  max-width: 760px;
+  text-shadow: 0 3px 28px rgba(0, 0, 0, 0.74);
+}
+
+.hero-copy::before {
+  background:
+    radial-gradient(circle at 0% 50%, rgba(3, 7, 4, 0.92), rgba(3, 7, 4, 0.48) 50%, transparent 76%),
+    linear-gradient(90deg, rgba(3, 7, 4, 0.92), transparent);
+  content: "";
+  filter: blur(2px);
+  inset: -86px -130px -86px -72px;
+  position: absolute;
+  z-index: -1;
 }
 
 .eyebrow {
@@ -220,11 +275,6 @@ p {
   color: #041006;
 }
 
-.button.ghost {
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid var(--line);
-}
-
 .hero-actions {
   flex-wrap: wrap;
   gap: 12px;
@@ -247,35 +297,6 @@ p {
   padding: 8px 12px;
 }
 
-.hero-visual {
-  align-self: center;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03));
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 34px;
-  box-shadow: var(--shadow), 0 0 80px rgba(52, 255, 98, 0.14);
-  overflow: hidden;
-  position: relative;
-  transform: perspective(1100px) rotateY(-6deg) rotateX(2deg);
-}
-
-.hero-visual::after {
-  background: linear-gradient(90deg, transparent, rgba(52, 255, 98, 0.65), transparent);
-  content: "";
-  height: 1px;
-  left: 28px;
-  position: absolute;
-  right: 28px;
-  top: 24px;
-}
-
-.hero-visual img {
-  aspect-ratio: 4 / 3;
-  display: block;
-  object-fit: cover;
-  object-position: center;
-  width: 100%;
-}
-
 .section {
   padding: clamp(64px, 9vw, 124px) clamp(18px, 5vw, 72px);
 }
@@ -286,44 +307,6 @@ p {
 
 .section-title.narrow {
   max-width: 740px;
-}
-
-.preview {
-  background: rgba(255, 255, 255, 0.018);
-  border-block: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.preview-grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: minmax(0, 1fr);
-  margin-top: 34px;
-  max-width: 1060px;
-}
-
-figure {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.11);
-  margin: 0;
-  overflow: hidden;
-  padding: 10px;
-}
-
-figure img {
-  aspect-ratio: 16 / 9;
-  border-radius: 16px;
-  display: block;
-  object-fit: cover;
-  width: 100%;
-}
-
-figcaption {
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 850;
-  padding: 11px 6px 4px;
 }
 
 .beta {
@@ -425,14 +408,18 @@ footer span {
 }
 
 @media (max-width: 1060px) {
-  .hero,
-  .preview-grid,
   .interest-form {
     grid-template-columns: 1fr;
   }
 
-  .hero-visual {
-    transform: none;
+  .hero::before {
+    background-size: cover, cover, auto 102%;
+    opacity: 0.66;
+  }
+
+  .hero::after {
+    background-size: cover, cover, auto 72%;
+    opacity: 0.52;
   }
 
   .interest-form button {
@@ -464,7 +451,18 @@ footer span {
     padding-top: 42px;
   }
 
-  .hero-visual {
-    border-radius: 24px;
+  .hero::before {
+    background-position: center, center, center top;
+    background-size: cover, cover, auto 74%;
+    mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.54) 54%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.54) 54%, transparent 100%);
+  }
+
+  .hero::after {
+    background-position: center, center, right bottom;
+    background-size: cover, cover, auto 58%;
+    mask-image: linear-gradient(0deg, #000 0%, rgba(0, 0, 0, 0.48) 52%, transparent 100%);
+    opacity: 0.42;
+    -webkit-mask-image: linear-gradient(0deg, #000 0%, rgba(0, 0, 0, 0.48) 52%, transparent 100%);
   }
 }
