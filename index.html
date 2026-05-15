@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="Libremotor is an open-source app workspace for compatible vehicle displays, with verified access, reproducible builds, and owner-controlled setup."
+      content="Libremotor is a private beta Hub for compatible C10 vehicle displays, with owner-verified activation and local app builds."
     >
-    <title>Libremotor - Vehicle App Workspace</title>
+    <title>Libremotor - Private beta for vehicle displays</title>
+    <link rel="icon" href="/assets/libremotor-icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/styles.css">
+    <script src="/signup.js" defer></script>
   </head>
   <body>
     <header class="topbar">
@@ -17,9 +19,8 @@
         <span>Libremotor</span>
       </a>
       <nav aria-label="Primary navigation">
-        <a href="#workspace">Workspace</a>
-        <a href="#flow">Flow</a>
-        <a href="#access">Access</a>
+        <a href="#preview">Preview</a>
+        <a href="#beta">Beta</a>
         <a href="/terms/">Terms</a>
         <a href="/pt-BR/">PT</a>
       </nav>
@@ -28,180 +29,85 @@
     <main>
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Private beta for compatible vehicle displays</p>
-          <h1>Libremotor</h1>
-          <p class="lead">
-            A controlled app workspace for owners who want reproducible builds,
-            verified activation, and a cleaner way to manage experimental
-            dashboard software.
-          </p>
-          <div class="hero-actions" aria-label="Primary actions">
-            <a class="button primary" href="#access">Request access</a>
-            <a class="button secondary" href="#workspace">Explore the workspace</a>
-          </div>
-        </div>
-
-        <div class="hero-scene" aria-hidden="true">
-          <div class="scene-topline"></div>
-          <div class="scene-card scene-card-left">
-            <span class="scene-label">Profile</span>
-            <strong>Ready</strong>
-            <span>Verified owner</span>
-          </div>
-          <div class="scene-card scene-card-right">
-            <span class="scene-label">Build</span>
-            <strong>Signed</strong>
-            <span>Reproducible output</span>
-          </div>
-          <div class="road">
-            <span class="road-line road-line-a"></span>
-            <span class="road-line road-line-b"></span>
-            <span class="road-line road-line-c"></span>
-            <span class="road-pulse"></span>
-          </div>
-          <div class="console">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-
-        <div class="hero-status" aria-label="Project status">
-          <span>Open source core</span>
-          <span>Owner verified</span>
-          <span>Private catalog</span>
-        </div>
-      </section>
-
-      <section class="section intro" id="workspace">
-        <div class="section-heading">
-          <p class="eyebrow">Workspace</p>
-          <h2>Everything is presented like an app shelf, but built like a lab.</h2>
-          <p>
-            Libremotor separates user choices from the technical details behind
-            each build. Pick the capability you need, review the terms, and let
-            the tooling assemble the matching profile.
-          </p>
-        </div>
-
-        <div class="app-grid">
-          <article class="app-tile">
-            <span class="app-icon hub" aria-hidden="true"></span>
-            <div>
-              <h3>Hub</h3>
-              <p>One place for activation, profile selection, recovery, and status.</p>
-            </div>
-            <span class="tile-tag">Required</span>
-          </article>
-          <article class="app-tile">
-            <span class="app-icon video" aria-hidden="true"></span>
-            <div>
-              <h3>Video profiles</h3>
-              <p>Choose signed-in or guest playback depending on the setup you want.</p>
-            </div>
-            <span class="tile-tag">Optional</span>
-          </article>
-          <article class="app-tile">
-            <span class="app-icon maps" aria-hidden="true"></span>
-            <div>
-              <h3>Navigation profiles</h3>
-              <p>Test compatible navigation builds without mixing them into media flows.</p>
-            </div>
-            <span class="tile-tag">Optional</span>
-          </article>
-          <article class="app-tile">
-            <span class="app-icon bridge" aria-hidden="true"></span>
-            <div>
-              <h3>Projection bridge</h3>
-              <p>Run a phone-assisted dashboard experience from a controlled package.</p>
-            </div>
-            <span class="tile-tag">Advanced</span>
-          </article>
-          <article class="app-tile">
-            <span class="app-icon builder" aria-hidden="true"></span>
-            <div>
-              <h3>Recipe builder</h3>
-              <p>Import source files, apply known recipes, verify metadata, and export.</p>
-            </div>
-            <span class="tile-tag">Local first</span>
-          </article>
-          <article class="app-tile">
-            <span class="app-icon safety" aria-hidden="true"></span>
-            <div>
-              <h3>Recovery lane</h3>
-              <p>Keep a predictable path back when a profile needs to be replaced.</p>
-            </div>
-            <span class="tile-tag">Built in</span>
-          </article>
-        </div>
-      </section>
-
-      <section class="section flow-section" id="flow">
-        <div class="section-heading compact">
-          <p class="eyebrow">How it works</p>
-          <h2>Clear choices, repeatable output.</h2>
-        </div>
-        <ol class="flow">
-          <li>
-            <span class="step-index">01</span>
-            <h3>Request access</h3>
-            <p>Start with a time-limited trial or share the details needed for private beta approval.</p>
-          </li>
-          <li>
-            <span class="step-index">02</span>
-            <h3>Activate the Hub</h3>
-            <p>The Hub checks eligibility and keeps profile choices tied to the owner.</p>
-          </li>
-          <li>
-            <span class="step-index">03</span>
-            <h3>Pick a profile</h3>
-            <p>Select navigation, video, projection, or a smaller recovery-focused setup.</p>
-          </li>
-          <li>
-            <span class="step-index">04</span>
-            <h3>Build and verify</h3>
-            <p>Recipes produce signed APKs with checks that catch mismatched outputs.</p>
-          </li>
-        </ol>
-      </section>
-
-      <section class="section split" id="access">
-        <div class="access-copy">
           <p class="eyebrow">Private beta</p>
-          <h2>Built for careful owners, not casual installs.</h2>
-          <p>
-            Libremotor is experimental software for user-owned hardware. The
-            current beta focuses on guided installs, explicit terms, and
-            reversible workflows before wider release.
+          <h1>Your car. Your software.</h1>
+          <p class="lead">
+            A small Hub for compatible C10 displays.
           </p>
-          <div class="access-actions">
-            <a class="button primary" href="mailto:access@libremotor.com?subject=Libremotor%20private%20beta">Request beta access</a>
-            <a class="button secondary" href="/terms/">Read the terms</a>
+          <div class="hero-actions">
+            <a class="button primary" href="#beta">Join beta list</a>
+            <a class="button ghost" href="#preview">Preview</a>
+          </div>
+          <div class="signal-row" aria-label="Current beta focus">
+            <span>C10 BEV</span>
+            <span>C10 REEV</span>
           </div>
         </div>
-        <div class="status-panel" aria-label="Libremotor beta checklist">
-          <div>
-            <span>01</span>
-            <strong>Owner approval</strong>
-            <p>Activation is checked server-side before advanced workflows run.</p>
-          </div>
-          <div>
-            <span>02</span>
-            <strong>Known recipes</strong>
-            <p>Builds use declared source versions, patch lists, and verification steps.</p>
-          </div>
-          <div>
-            <span>03</span>
-            <strong>Responsible use</strong>
-            <p>Users accept the risks around accounts, warranty, stability, and safety.</p>
-          </div>
+
+        <div class="hero-visual" aria-label="Libremotor cabin preview">
+          <img src="/assets/media/libremotor-cabin.jpg" alt="Vehicle cabin with Libremotor running on the center display">
         </div>
+      </section>
+
+      <section class="section preview" id="preview">
+        <div class="section-title">
+          <p class="eyebrow">Preview</p>
+        </div>
+        <div class="preview-grid">
+          <figure class="wide-shot">
+            <img src="/assets/media/headunit-center.jpg" alt="Vehicle display running owner-installed apps">
+          </figure>
+        </div>
+      </section>
+
+      <section class="section beta" id="beta">
+        <div class="section-title narrow">
+          <p class="eyebrow">Beta access</p>
+          <h2>Waitlist.</h2>
+        </div>
+        <form
+          class="interest-form"
+          data-interest-form
+          data-locale="en"
+          data-loading="Sending interest..."
+          data-success="Interest recorded. We will contact you when your beta slot is ready."
+          data-error="Could not submit right now. Please try again in a moment."
+        >
+          <label class="form-field">
+            <span>Email</span>
+            <input name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+          </label>
+          <label class="form-field">
+            <span>Vehicle</span>
+            <select name="vehicle_type" required>
+              <option value="">Choose model</option>
+              <option value="c10_bev">C10 BEV</option>
+              <option value="c10_reev">C10 REEV</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Country</span>
+            <input name="country" autocomplete="country-name" list="country-options-en" placeholder="Brazil" required>
+          </label>
+          <datalist id="country-options-en">
+            <option value="Brazil"></option>
+            <option value="Portugal"></option>
+            <option value="United Kingdom"></option>
+            <option value="Germany"></option>
+            <option value="France"></option>
+            <option value="Spain"></option>
+            <option value="China"></option>
+            <option value="United States"></option>
+          </datalist>
+          <button class="button primary" type="submit">Join beta list</button>
+          <p class="form-status" role="status" data-form-status></p>
+        </form>
       </section>
     </main>
 
     <footer>
       <span>Libremotor</span>
+      <span class="footer-made">Proudly made in Brazil 🇧🇷</span>
       <a href="/terms/">Terms</a>
       <a href="/pt-BR/">Português</a>
     </footer>
