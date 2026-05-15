@@ -121,6 +121,22 @@ footer a:hover {
   color: var(--text);
 }
 
+.footer-link {
+  appearance: none;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 0;
+}
+
+.footer-link:hover {
+  color: var(--text);
+}
+
 .language-link {
   align-items: center;
   border: 1px solid rgba(141, 255, 178, 0.18);
@@ -292,6 +308,12 @@ p {
   border: 0;
   box-shadow: 0 0 34px rgba(52, 255, 98, 0.33);
   color: #041006;
+}
+
+.button.subtle {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(141, 255, 178, 0.18);
+  color: var(--text);
 }
 
 .hero-actions {
@@ -468,6 +490,162 @@ p {
   margin-bottom: 10px;
 }
 
+.admin-auth {
+  align-items: end;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(141, 255, 178, 0.16);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(260px, 1fr) auto auto;
+  margin: 30px 0 18px;
+  padding: 18px;
+}
+
+.admin-toolbar,
+.admin-actions,
+.table-header {
+  align-items: center;
+  display: flex;
+}
+
+.admin-toolbar {
+  gap: 18px;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.admin-actions {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.metrics-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 22px 0;
+}
+
+.metric-card,
+.admin-panel {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(141, 255, 178, 0.16);
+  border-radius: 8px;
+}
+
+.metric-card {
+  padding: 18px;
+}
+
+.metric-card span {
+  color: var(--muted);
+  display: block;
+  font-size: 12px;
+  font-weight: 950;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.metric-card strong {
+  color: var(--text);
+  font-size: 34px;
+  line-height: 1;
+}
+
+.admin-panels {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 22px 0;
+}
+
+.admin-panel {
+  padding: 18px;
+}
+
+.admin-panel h2,
+.table-header h2 {
+  font-size: 24px;
+}
+
+.stat-list {
+  display: grid;
+  gap: 12px;
+}
+
+.stat-row div {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.stat-row strong,
+.stat-row span {
+  font-size: 14px;
+}
+
+.stat-row span {
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.stat-row i {
+  background: linear-gradient(90deg, var(--green), rgba(52, 255, 98, 0.12));
+  border-radius: 999px;
+  display: block;
+  height: 5px;
+}
+
+.admin-table-wrap {
+  margin-top: 28px;
+}
+
+.table-header {
+  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.form-field.compact {
+  max-width: 360px;
+  width: min(100%, 360px);
+}
+
+.table-scroll {
+  border: 1px solid rgba(141, 255, 178, 0.16);
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.admin-table {
+  border-collapse: collapse;
+  min-width: 980px;
+  width: 100%;
+}
+
+.admin-table th,
+.admin-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 13px 14px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.admin-table th {
+  background: rgba(52, 255, 98, 0.08);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.admin-table td {
+  color: rgba(232, 244, 234, 0.82);
+  font-size: 14px;
+}
+
 .beta {
   background:
     radial-gradient(circle at 18% 10%, rgba(52, 255, 98, 0.12), transparent 30%),
@@ -566,7 +744,45 @@ footer span {
   color: var(--muted);
 }
 
+.consent-banner {
+  background: rgba(3, 7, 4, 0.94);
+  border: 1px solid rgba(141, 255, 178, 0.22);
+  border-radius: 8px;
+  bottom: 18px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 14px;
+  left: 18px;
+  max-width: 560px;
+  padding: 18px;
+  position: fixed;
+  right: 18px;
+  z-index: 60;
+}
+
+.consent-banner h2 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.consent-banner p {
+  color: rgba(232, 244, 234, 0.78);
+  margin: 0;
+}
+
+.consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 @media (max-width: 1060px) {
+  .admin-auth,
+  .metrics-grid,
+  .admin-panels {
+    grid-template-columns: 1fr;
+  }
+
   .policy-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -639,6 +855,12 @@ footer span {
 
   .policy-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-toolbar,
+  .table-header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .hero {

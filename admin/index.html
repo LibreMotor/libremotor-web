@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Libremotor Beta Console</title>
+    <link rel="icon" href="/assets/libremotor-icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/admin.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Libremotor home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Libremotor</span>
+      </a>
+      <nav aria-label="Admin navigation">
+        <a href="/">Home</a>
+        <a class="language-link" href="/pt-BR/" aria-label="Português do Brasil" title="Português do Brasil">🇧🇷</a>
+      </nav>
+    </header>
+
+    <main class="content document admin-page">
+      <section class="document-hero">
+        <p class="eyebrow">Private console</p>
+        <h1>Beta Interest</h1>
+        <p class="document-lead">
+          Signups, demand by vehicle, country distribution, and recent activity.
+        </p>
+      </section>
+
+      <form class="admin-auth" data-admin-auth>
+        <label class="form-field">
+          <span>Admin token</span>
+          <input name="token" type="password" autocomplete="off" placeholder="Bearer token" required>
+        </label>
+        <button class="button primary" type="submit">Load dashboard</button>
+        <button class="button subtle" type="button" data-forget-token>Forget token</button>
+      </form>
+
+      <section class="admin-toolbar" aria-label="Dashboard actions">
+        <p class="form-status" role="status" data-admin-status></p>
+        <div class="admin-actions">
+          <button class="button subtle" type="button" data-refresh>Refresh</button>
+          <button class="button subtle" type="button" data-export-csv>Export CSV</button>
+        </div>
+      </section>
+
+      <section class="metrics-grid" aria-label="Signup metrics" data-metrics></section>
+
+      <section class="admin-panels">
+        <article class="admin-panel">
+          <h2>Countries</h2>
+          <div class="stat-list" data-country-stats></div>
+        </article>
+        <article class="admin-panel">
+          <h2>Daily activity</h2>
+          <div class="stat-list" data-day-stats></div>
+        </article>
+      </section>
+
+      <section class="admin-table-wrap" aria-labelledby="signup-table-title">
+        <div class="table-header">
+          <h2 id="signup-table-title">Latest signups</h2>
+          <label class="form-field compact">
+            <span>Filter</span>
+            <input name="filter" type="search" placeholder="Email, country, vehicle..." data-filter>
+          </label>
+        </div>
+        <div class="table-scroll">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Vehicle</th>
+                <th>Country</th>
+                <th>Locale</th>
+                <th>Source</th>
+                <th>Created</th>
+                <th>Updated</th>
+              </tr>
+            </thead>
+            <tbody data-signup-rows>
+              <tr>
+                <td colspan="7">Enter the admin token to load beta interest data.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

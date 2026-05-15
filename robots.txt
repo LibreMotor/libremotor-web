@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
 
 Sitemap: https://libremotor.com/sitemap.xml
-
