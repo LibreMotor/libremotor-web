@@ -716,6 +716,31 @@ p {
   font-size: 14px;
 }
 
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover,
+.clickable-row:focus-visible {
+  background: rgba(52, 255, 98, 0.08);
+  outline: none;
+}
+
+.table-pagination {
+  align-items: center;
+  color: rgba(232, 244, 234, 0.74);
+  display: flex;
+  font-size: 13px;
+  font-weight: 900;
+  justify-content: space-between;
+  padding-top: 12px;
+}
+
+.table-pagination .button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .row-actions {
   display: flex;
   flex-wrap: wrap;
