@@ -23,16 +23,9 @@
 
     <main class="content document admin-page">
       <section class="admin-login" data-login-panel>
-        <p class="eyebrow">Private console</p>
-        <h1>Admin Login</h1>
-        <p class="document-lead">Enter the admin token to manage beta access, VIN trials, and invite emails.</p>
         <form class="admin-auth" data-admin-login>
-          <label class="form-field">
-            <span>Admin token</span>
-            <input name="token" type="password" autocomplete="current-password" placeholder="Bearer token" required>
-          </label>
+          <input name="token" type="password" autocomplete="current-password" aria-label="Admin token" required>
           <button class="button primary" type="submit">Login</button>
-          <button class="button subtle" type="button" data-forget-token>Forget</button>
           <p class="form-status" role="status" data-login-status></p>
         </form>
       </section>
