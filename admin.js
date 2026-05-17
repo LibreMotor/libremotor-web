@@ -2,24 +2,33 @@ const API_BASE_URL = "https://api.libremotor.com";
 const TOKEN_STORAGE_KEY = "libremotor.adminToken";
 
 const state = {
-  items: [],
-  stats: null,
+  signups: [],
+  signupStats: null,
+  vehicles: [],
+  activeTab: "overview",
+  lastInvite: null,
 };
 
-const authForm = document.querySelector("[data-admin-auth]");
-const tokenInput = authForm?.elements.token;
-const statusEl = document.querySelector("[data-admin-status]");
+const loginPanel = document.querySelector("[data-login-panel]");
+const adminShell = document.querySelector("[data-admin-shell]");
+const loginForm = document.querySelector("[data-admin-login]");
+const tokenInput = loginForm?.elements.token;
+const loginStatusEl = document.querySelector("[data-login-status]");
+const adminStatusEl = document.querySelector("[data-admin-status]");
 const metricsEl = document.querySelector("[data-metrics]");
 const countryStatsEl = document.querySelector("[data-country-stats]");
 const dayStatsEl = document.querySelector("[data-day-stats]");
-const rowsEl = document.querySelector("[data-signup-rows]");
-const filterInput = document.querySelector("[data-filter]");
-
-function setStatus(message, stateName = "") {
-  if (!statusEl) return;
-  statusEl.textContent = message;
-  statusEl.dataset.state = stateName;
-}
+const signupRowsEl = document.querySelector("[data-signup-rows]");
+const vehicleRowsEl = document.querySelector("[data-vehicle-rows]");
+const signupFilterInput = document.querySelector("[data-signup-filter]");
+const vehicleFilterInput = document.querySelector("[data-vehicle-filter]");
+const accessForm = document.querySelector("[data-access-form]");
+const inviteForm = document.querySelector("[data-invite-form]");
+const inviteOutput = document.querySelector("[data-invite-output]");
+const inviteCodeEl = document.querySelector("[data-invite-code]");
+const inviteSubjectInput = document.querySelector("[data-invite-subject]");
+const inviteMessageInput = document.querySelector("[data-invite-message]");
+const inviteMailtoLink = document.querySelector("[data-mailto-invite]");
 
 function storedToken() {
   return localStorage.getItem(TOKEN_STORAGE_KEY) || "";
@@ -29,44 +38,91 @@ function activeToken() {
   return tokenInput?.value.trim() || storedToken();
 }
 
-async function loadDashboard() {
+function setLoginStatus(message, stateName = "") {
+  setStatus(loginStatusEl, message, stateName);
+}
+
+function setAdminStatus(message, stateName = "") {
+  setStatus(adminStatusEl, message, stateName);
+}
+
+function setStatus(element, message, stateName = "") {
+  if (!element) return;
+  element.textContent = message;
+  element.dataset.state = stateName;
+}
+
+async function api(path, options = {}) {
   const token = activeToken();
   if (!token) {
-    setStatus("Admin token is required.", "error");
-    return;
+    throw new Error("Admin token is required.");
   }
-
-  setStatus("Loading beta interest data...");
-  const response = await fetch(`${API_BASE_URL}/v1/admin/beta-interest?limit=500`, {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...options,
     headers: {
+      ...(options.headers || {}),
       Authorization: `Bearer ${token}`,
     },
   });
-
+  const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || `Request failed with ${response.status}`);
+    throw new Error(payload.message || payload.error || `Request failed with ${response.status}`);
   }
-
-  const payload = await response.json();
-  localStorage.setItem(TOKEN_STORAGE_KEY, token);
-  state.items = Array.isArray(payload.items) ? payload.items : [];
-  state.stats = payload.stats || buildFallbackStats(state.items);
-  renderDashboard();
-  setStatus(`Loaded ${state.items.length} latest signups. Total: ${payload.total ?? state.items.length}.`, "success");
+  return payload;
 }
 
-function buildFallbackStats(items) {
+async function login() {
+  const token = activeToken();
+  if (!token) {
+    setLoginStatus("Admin token is required.", "error");
+    return;
+  }
+  setLoginStatus("Checking token...");
+  await api("/v1/admin/session");
+  localStorage.setItem(TOKEN_STORAGE_KEY, token);
+  showShell();
+  await refreshAll();
+}
+
+function showShell() {
+  if (loginPanel) loginPanel.hidden = true;
+  if (adminShell) adminShell.hidden = false;
+  setLoginStatus("");
+}
+
+function showLogin() {
+  if (loginPanel) loginPanel.hidden = false;
+  if (adminShell) adminShell.hidden = true;
+}
+
+async function refreshAll() {
+  setAdminStatus("Loading admin data...");
+  const [signups, vehicles] = await Promise.all([
+    api("/v1/admin/beta-interest?limit=500"),
+    api("/v1/admin/vehicles?limit=1000"),
+  ]);
+  state.signups = Array.isArray(signups.items) ? signups.items : [];
+  state.signupStats = signups.stats || buildFallbackSignupStats(state.signups);
+  state.vehicles = Array.isArray(vehicles.items) ? vehicles.items : [];
+  renderDashboard();
+  setAdminStatus(`Loaded ${state.signups.length} signups and ${state.vehicles.length} vehicles.`, "success");
+}
+
+function renderDashboard() {
+  renderSignupMetrics();
+  renderStatList(countryStatsEl, state.signupStats?.by_country || []);
+  renderStatList(dayStatsEl, state.signupStats?.by_day || [], "day");
+  renderSignupRows();
+  renderVehicleRows();
+}
+
+function buildFallbackSignupStats(items) {
   return {
     total: items.length,
     updated_last_24h: items.filter((item) => Number(item.updated_at || 0) >= Date.now() / 1000 - 86400).length,
     by_vehicle_type: groupItems(items, "vehicle_type"),
     by_country: groupItems(items, "country"),
-    by_locale: groupItems(items, "locale"),
-    by_day: groupItems(
-      items.map((item) => ({ day: formatDay(item.updated_at) })),
-      "day",
-    ),
+    by_day: groupItems(items.map((item) => ({ day: formatDay(item.updated_at) })), "day"),
   };
 }
 
@@ -81,22 +137,25 @@ function groupItems(items, field) {
     .map(([value, count]) => ({ value, count }));
 }
 
-function renderDashboard() {
-  const stats = state.stats || buildFallbackStats(state.items);
+function renderSignupMetrics() {
+  if (!metricsEl) return;
+  const stats = state.signupStats || buildFallbackSignupStats(state.signups);
   const vehicleStats = new Map((stats.by_vehicle_type || []).map((entry) => [entry.value, entry.count]));
+  const vehicleAccess = groupItems(state.vehicles, "access");
+  const accessStats = new Map(vehicleAccess.map((entry) => [entry.value, entry.count]));
   renderMetrics([
-    ["Total", stats.total ?? state.items.length],
-    ["Last 24h", stats.updated_last_24h ?? 0],
+    ["Signups", stats.total ?? state.signups.length],
+    ["Vehicles", state.vehicles.length],
+    ["Trials", accessStats.get("trial") || 0],
+    ["Lifetime", accessStats.get("lifetime") || 0],
     ["C10 BEV", vehicleStats.get("c10_bev") || 0],
     ["C10 REEV", vehicleStats.get("c10_reev") || 0],
+    ["Expired", accessStats.get("expired") || 0],
+    ["Disabled", accessStats.get("disabled") || 0],
   ]);
-  renderStatList(countryStatsEl, stats.by_country || []);
-  renderStatList(dayStatsEl, stats.by_day || [], "day");
-  renderRows();
 }
 
 function renderMetrics(metrics) {
-  if (!metricsEl) return;
   metricsEl.innerHTML = metrics
     .map(
       ([label, value]) => `
@@ -135,24 +194,21 @@ function renderStatList(container, entries, type = "value") {
     .join("");
 }
 
-function renderRows() {
-  if (!rowsEl) return;
-  const query = (filterInput?.value || "").trim().toLowerCase();
+function renderSignupRows() {
+  if (!signupRowsEl) return;
+  const query = (signupFilterInput?.value || "").trim().toLowerCase();
   const items = query
-    ? state.items.filter((item) =>
-        [item.email, item.vehicle_type, item.country, item.locale, item.source]
-          .join(" ")
-          .toLowerCase()
-          .includes(query),
+    ? state.signups.filter((item) =>
+        [item.email, item.vehicle_type, item.country, item.locale, item.source].join(" ").toLowerCase().includes(query),
       )
-    : state.items;
+    : state.signups;
 
   if (!items.length) {
-    rowsEl.innerHTML = `<tr><td colspan="7">${state.items.length ? "No signups match this filter." : "No signups yet."}</td></tr>`;
+    signupRowsEl.innerHTML = `<tr><td colspan="6">${state.signups.length ? "No signups match this filter." : "No signups yet."}</td></tr>`;
     return;
   }
 
-  rowsEl.innerHTML = items
+  signupRowsEl.innerHTML = items
     .map(
       (item) => `
         <tr>
@@ -161,7 +217,6 @@ function renderRows() {
           <td>${escapeHtml(item.country)}</td>
           <td>${escapeHtml(item.locale || "-")}</td>
           <td>${escapeHtml(item.source || "-")}</td>
-          <td>${escapeHtml(formatDateTime(item.created_at))}</td>
           <td>${escapeHtml(formatDateTime(item.updated_at))}</td>
         </tr>
       `,
@@ -169,15 +224,129 @@ function renderRows() {
     .join("");
 }
 
+function renderVehicleRows() {
+  if (!vehicleRowsEl) return;
+  const query = (vehicleFilterInput?.value || "").trim().toLowerCase();
+  const vehicles = query
+    ? state.vehicles.filter((item) =>
+        [item.email, item.vin_suffix, item.label, item.access, item.status].join(" ").toLowerCase().includes(query),
+      )
+    : state.vehicles;
+
+  if (!vehicles.length) {
+    vehicleRowsEl.innerHTML = `<tr><td colspan="7">${state.vehicles.length ? "No vehicles match this filter." : "No vehicles yet."}</td></tr>`;
+    return;
+  }
+
+  vehicleRowsEl.innerHTML = vehicles
+    .map(
+      (vehicle) => `
+        <tr>
+          <td>${escapeHtml(vehicle.email || "-")}</td>
+          <td>${escapeHtml(vehicle.vin_suffix ? `...${vehicle.vin_suffix}` : "-")}</td>
+          <td><span class="status-pill ${escapeHtml(vehicle.access)}">${escapeHtml(formatAccess(vehicle.access))}</span></td>
+          <td>${escapeHtml(formatDateTime(vehicle.trial_expires_at))}</td>
+          <td>${Number(vehicle.activations_count || 0).toLocaleString()}</td>
+          <td>${escapeHtml(vehicle.label || "-")}</td>
+          <td>
+            <div class="row-actions">
+              <button type="button" data-vehicle-action="extend" data-vin-hash="${escapeHtml(vehicle.vin_hash)}">+7d</button>
+              <button type="button" data-vehicle-action="lifetime" data-vin-hash="${escapeHtml(vehicle.vin_hash)}">Lifetime</button>
+              <button type="button" data-vehicle-action="disable" data-vin-hash="${escapeHtml(vehicle.vin_hash)}">Disable</button>
+            </div>
+          </td>
+        </tr>
+      `,
+    )
+    .join("");
+}
+
+async function saveAccess(form) {
+  const data = new FormData(form);
+  const payload = {
+    email: String(data.get("email") || "").trim(),
+    vin: normalizeVinInput(data.get("vin")),
+    label: String(data.get("label") || "").trim(),
+    access: String(data.get("access") || "trial"),
+    days: Number(data.get("days") || 7),
+  };
+  setAdminStatus("Saving vehicle access...");
+  const result = await postJson("/v1/admin/vehicles/set-access", payload);
+  setAdminStatus(`Saved ${formatAccess(result.access)} access for VIN ending ${result.vin_suffix || "registered"}.`, "success");
+  form.reset();
+  form.elements.days.value = "7";
+  await refreshAll();
+}
+
+async function createInvite(form) {
+  const data = new FormData(form);
+  const payload = {
+    email: String(data.get("email") || "").trim(),
+    vin: normalizeVinInput(data.get("vin")),
+    vehicle_type: String(data.get("vehicle_type") || "c10_bev"),
+    country: String(data.get("country") || "").trim(),
+    access: String(data.get("access") || "trial"),
+    trial_days: Number(data.get("trial_days") || 7),
+    code_days: Number(data.get("code_days") || 14),
+    download_url: String(data.get("download_url") || "").trim(),
+    locale: String(data.get("locale") || "pt-BR"),
+    send_email: Boolean(data.get("send_email")),
+  };
+  setAdminStatus("Creating invite...");
+  const result = await postJson("/v1/admin/invitations/create", payload);
+  state.lastInvite = result;
+  renderInvite(result);
+  const delivery = result.email_delivery?.sent ? "Email sent." : "Email draft ready.";
+  setAdminStatus(`${delivery} Code ${result.activation_code} created.`, "success");
+  await refreshAll();
+}
+
+async function postJson(path, payload) {
+  return await api(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
+
+function renderInvite(result) {
+  if (!inviteOutput || !result?.email_template) return;
+  inviteOutput.hidden = false;
+  if (inviteCodeEl) {
+    inviteCodeEl.textContent = `Code: ${result.activation_code} · VIN ...${result.vehicle?.vin_suffix || ""}`;
+  }
+  if (inviteSubjectInput) inviteSubjectInput.value = result.email_template.subject || "";
+  if (inviteMessageInput) inviteMessageInput.value = result.email_template.text || "";
+  if (inviteMailtoLink) inviteMailtoLink.href = result.email_template.mailto || "#";
+}
+
+async function runVehicleAction(action, vinHash) {
+  const payload = { vin_hash: vinHash };
+  if (action === "extend") {
+    payload.access = "trial";
+    payload.days = 7;
+  } else if (action === "lifetime") {
+    payload.access = "lifetime";
+  } else if (action === "disable") {
+    payload.access = "disabled";
+  } else {
+    return;
+  }
+  setAdminStatus("Updating vehicle...");
+  const result = await postJson("/v1/admin/vehicles/set-access", payload);
+  setAdminStatus(`Vehicle is now ${formatAccess(result.access)}.`, "success");
+  await refreshAll();
+}
+
 function exportCsv() {
-  if (!state.items.length) {
-    setStatus("No data to export.", "error");
+  if (!state.signups.length) {
+    setAdminStatus("No signup data to export.", "error");
     return;
   }
   const header = ["email", "vehicle_type", "country", "locale", "source", "created_at", "updated_at"];
   const csv = [
     header.join(","),
-    ...state.items.map((item) =>
+    ...state.signups.map((item) =>
       header
         .map((field) => {
           const value = field.endsWith("_at") ? formatDateTime(item[field]) : item[field] || "";
@@ -194,9 +363,40 @@ function exportCsv() {
   URL.revokeObjectURL(link.href);
 }
 
+function switchTab(tab) {
+  state.activeTab = tab;
+  document.querySelectorAll("[data-tab-button]").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.tabButton === tab);
+  });
+  document.querySelectorAll("[data-tab-panel]").forEach((panel) => {
+    panel.hidden = panel.dataset.tabPanel !== tab;
+  });
+}
+
+function logout() {
+  localStorage.removeItem(TOKEN_STORAGE_KEY);
+  if (tokenInput) tokenInput.value = "";
+  state.signups = [];
+  state.vehicles = [];
+  showLogin();
+  setLoginStatus("Logged out.", "success");
+}
+
+function normalizeVinInput(value) {
+  return String(value || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 17);
+}
+
 function formatVehicle(value) {
   if (value === "c10_bev") return "C10 BEV";
   if (value === "c10_reev") return "C10 REEV";
+  return value || "-";
+}
+
+function formatAccess(value) {
+  if (value === "lifetime") return "Lifetime";
+  if (value === "trial") return "Trial";
+  if (value === "expired") return "Expired";
+  if (value === "disabled") return "Disabled";
   return value || "-";
 }
 
@@ -223,33 +423,75 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
-authForm?.addEventListener("submit", async (event) => {
+loginForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
-    await loadDashboard();
+    await login();
   } catch (error) {
-    setStatus(error.message || "Could not load dashboard.", "error");
+    setLoginStatus(error.message || "Login failed.", "error");
   }
 });
 
 document.querySelector("[data-refresh]")?.addEventListener("click", async () => {
   try {
-    await loadDashboard();
+    await refreshAll();
   } catch (error) {
-    setStatus(error.message || "Could not refresh dashboard.", "error");
+    setAdminStatus(error.message || "Could not refresh dashboard.", "error");
   }
 });
 
+document.querySelector("[data-logout]")?.addEventListener("click", logout);
+document.querySelector("[data-forget-token]")?.addEventListener("click", logout);
 document.querySelector("[data-export-csv]")?.addEventListener("click", exportCsv);
+signupFilterInput?.addEventListener("input", renderSignupRows);
+vehicleFilterInput?.addEventListener("input", renderVehicleRows);
 
-document.querySelector("[data-forget-token]")?.addEventListener("click", () => {
-  localStorage.removeItem(TOKEN_STORAGE_KEY);
-  if (tokenInput) tokenInput.value = "";
-  setStatus("Admin token removed from this browser.", "success");
+document.querySelectorAll("[data-tab-button]").forEach((button) => {
+  button.addEventListener("click", () => switchTab(button.dataset.tabButton));
 });
 
-filterInput?.addEventListener("input", renderRows);
+accessForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    await saveAccess(accessForm);
+  } catch (error) {
+    setAdminStatus(error.message || "Could not save access.", "error");
+  }
+});
+
+inviteForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    await createInvite(inviteForm);
+  } catch (error) {
+    setAdminStatus(error.message || "Could not create invite.", "error");
+  }
+});
+
+vehicleRowsEl?.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-vehicle-action]");
+  if (!button) return;
+  try {
+    await runVehicleAction(button.dataset.vehicleAction, button.dataset.vinHash);
+  } catch (error) {
+    setAdminStatus(error.message || "Could not update vehicle.", "error");
+  }
+});
+
+document.querySelector("[data-copy-invite]")?.addEventListener("click", async () => {
+  const message = inviteMessageInput?.value || "";
+  if (!message) return;
+  await navigator.clipboard.writeText(message);
+  setAdminStatus("Invite message copied.", "success");
+});
 
 if (tokenInput && storedToken()) {
   tokenInput.value = storedToken();
+  login().catch(() => {
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    showLogin();
+    setLoginStatus("Saved token was rejected. Login again.", "error");
+  });
+} else {
+  showLogin();
 }

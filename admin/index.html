@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex,nofollow">
-    <title>Libremotor Beta Console</title>
+    <title>Libremotor Admin</title>
     <link rel="icon" href="/assets/libremotor-icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/styles.css">
     <script src="/admin.js" defer></script>
@@ -22,72 +22,212 @@
     </header>
 
     <main class="content document admin-page">
-      <section class="document-hero">
+      <section class="admin-login" data-login-panel>
         <p class="eyebrow">Private console</p>
-        <h1>Beta Interest</h1>
-        <p class="document-lead">
-          Signups, demand by vehicle, country distribution, and recent activity.
-        </p>
-      </section>
-
-      <form class="admin-auth" data-admin-auth>
-        <label class="form-field">
-          <span>Admin token</span>
-          <input name="token" type="password" autocomplete="off" placeholder="Bearer token" required>
-        </label>
-        <button class="button primary" type="submit">Load dashboard</button>
-        <button class="button subtle" type="button" data-forget-token>Forget token</button>
-      </form>
-
-      <section class="admin-toolbar" aria-label="Dashboard actions">
-        <p class="form-status" role="status" data-admin-status></p>
-        <div class="admin-actions">
-          <button class="button subtle" type="button" data-refresh>Refresh</button>
-          <button class="button subtle" type="button" data-export-csv>Export CSV</button>
-        </div>
-      </section>
-
-      <section class="metrics-grid" aria-label="Signup metrics" data-metrics></section>
-
-      <section class="admin-panels">
-        <article class="admin-panel">
-          <h2>Countries</h2>
-          <div class="stat-list" data-country-stats></div>
-        </article>
-        <article class="admin-panel">
-          <h2>Daily activity</h2>
-          <div class="stat-list" data-day-stats></div>
-        </article>
-      </section>
-
-      <section class="admin-table-wrap" aria-labelledby="signup-table-title">
-        <div class="table-header">
-          <h2 id="signup-table-title">Latest signups</h2>
-          <label class="form-field compact">
-            <span>Filter</span>
-            <input name="filter" type="search" placeholder="Email, country, vehicle..." data-filter>
+        <h1>Admin Login</h1>
+        <p class="document-lead">Enter the admin token to manage beta access, VIN trials, and invite emails.</p>
+        <form class="admin-auth" data-admin-login>
+          <label class="form-field">
+            <span>Admin token</span>
+            <input name="token" type="password" autocomplete="current-password" placeholder="Bearer token" required>
           </label>
+          <button class="button primary" type="submit">Login</button>
+          <button class="button subtle" type="button" data-forget-token>Forget</button>
+          <p class="form-status" role="status" data-login-status></p>
+        </form>
+      </section>
+
+      <section class="admin-shell" data-admin-shell hidden>
+        <div class="document-hero admin-hero">
+          <div>
+            <p class="eyebrow">Private console</p>
+            <h1>Beta Ops</h1>
+            <p class="document-lead">Signups, vehicle access, trial expiry, lifetime approvals, and invite delivery.</p>
+          </div>
+          <div class="admin-actions">
+            <button class="button subtle" type="button" data-refresh>Refresh</button>
+            <button class="button subtle" type="button" data-logout>Logout</button>
+          </div>
         </div>
-        <div class="table-scroll">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Vehicle</th>
-                <th>Country</th>
-                <th>Locale</th>
-                <th>Source</th>
-                <th>Created</th>
-                <th>Updated</th>
-              </tr>
-            </thead>
-            <tbody data-signup-rows>
-              <tr>
-                <td colspan="7">Enter the admin token to load beta interest data.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+
+        <nav class="admin-tabs" aria-label="Admin sections">
+          <button type="button" class="is-active" data-tab-button="overview">Overview</button>
+          <button type="button" data-tab-button="vehicles">VIN Access</button>
+          <button type="button" data-tab-button="invite">Invite</button>
+        </nav>
+
+        <p class="form-status" role="status" data-admin-status></p>
+
+        <section data-tab-panel="overview">
+          <section class="metrics-grid" aria-label="Signup metrics" data-metrics></section>
+
+          <section class="admin-panels">
+            <article class="admin-panel">
+              <h2>Countries</h2>
+              <div class="stat-list" data-country-stats></div>
+            </article>
+            <article class="admin-panel">
+              <h2>Daily activity</h2>
+              <div class="stat-list" data-day-stats></div>
+            </article>
+          </section>
+
+          <section class="admin-table-wrap" aria-labelledby="signup-table-title">
+            <div class="table-header">
+              <h2 id="signup-table-title">Latest signups</h2>
+              <div class="admin-actions">
+                <label class="form-field compact">
+                  <span>Filter</span>
+                  <input name="filter" type="search" placeholder="Email, country, vehicle..." data-signup-filter>
+                </label>
+                <button class="button subtle" type="button" data-export-csv>Export CSV</button>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Email</th>
+                    <th>Vehicle</th>
+                    <th>Country</th>
+                    <th>Locale</th>
+                    <th>Source</th>
+                    <th>Updated</th>
+                  </tr>
+                </thead>
+                <tbody data-signup-rows></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section data-tab-panel="vehicles" hidden>
+          <form class="admin-form-grid" data-access-form>
+            <label class="form-field">
+              <span>Email</span>
+              <input name="email" type="email" placeholder="owner@example.com">
+            </label>
+            <label class="form-field">
+              <span>VIN</span>
+              <input name="vin" type="text" minlength="17" maxlength="17" placeholder="17 characters" required>
+            </label>
+            <label class="form-field">
+              <span>Label</span>
+              <input name="label" type="text" placeholder="name, order, note">
+            </label>
+            <label class="form-field">
+              <span>Access</span>
+              <select name="access">
+                <option value="trial">Trial</option>
+                <option value="lifetime">Lifetime</option>
+                <option value="disabled">Disabled</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Days</span>
+              <input name="days" type="number" min="1" max="365" value="7">
+            </label>
+            <button class="button primary" type="submit">Save access</button>
+          </form>
+
+          <section class="admin-table-wrap" aria-labelledby="vehicle-table-title">
+            <div class="table-header">
+              <h2 id="vehicle-table-title">Vehicle Access</h2>
+              <label class="form-field compact">
+                <span>Filter</span>
+                <input name="vehicle_filter" type="search" placeholder="Email, suffix, label..." data-vehicle-filter>
+              </label>
+            </div>
+            <div class="table-scroll">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Email</th>
+                    <th>VIN</th>
+                    <th>Access</th>
+                    <th>Trial expires</th>
+                    <th>Activations</th>
+                    <th>Label</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody data-vehicle-rows></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section data-tab-panel="invite" hidden>
+          <form class="admin-form-grid invite-form" data-invite-form>
+            <label class="form-field">
+              <span>Email</span>
+              <input name="email" type="email" placeholder="owner@example.com" required>
+            </label>
+            <label class="form-field">
+              <span>VIN</span>
+              <input name="vin" type="text" minlength="17" maxlength="17" placeholder="17 characters" required>
+            </label>
+            <label class="form-field">
+              <span>Vehicle</span>
+              <select name="vehicle_type">
+                <option value="c10_bev">C10 BEV</option>
+                <option value="c10_reev">C10 REEV</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Country</span>
+              <input name="country" type="text" value="BR" required>
+            </label>
+            <label class="form-field">
+              <span>Access</span>
+              <select name="access">
+                <option value="trial">7-day trial</option>
+                <option value="lifetime">Lifetime</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Trial days</span>
+              <input name="trial_days" type="number" min="1" max="365" value="7">
+            </label>
+            <label class="form-field">
+              <span>Code valid days</span>
+              <input name="code_days" type="number" min="1" max="365" value="14">
+            </label>
+            <label class="form-field">
+              <span>APK URL</span>
+              <input name="download_url" type="url" placeholder="https://.../Libremotor.apk">
+            </label>
+            <label class="form-field">
+              <span>Language</span>
+              <select name="locale">
+                <option value="pt-BR">Português</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+            <label class="form-field checkbox-field">
+              <span>Delivery</span>
+              <label><input name="send_email" type="checkbox"> Send email now if provider is configured</label>
+            </label>
+            <button class="button primary" type="submit">Create invite</button>
+          </form>
+
+          <article class="admin-panel invite-output" data-invite-output hidden>
+            <h2>Invite email</h2>
+            <div class="invite-code" data-invite-code></div>
+            <label class="form-field">
+              <span>Subject</span>
+              <input data-invite-subject readonly>
+            </label>
+            <label class="form-field">
+              <span>Message</span>
+              <textarea data-invite-message readonly rows="12"></textarea>
+            </label>
+            <div class="admin-actions">
+              <button class="button subtle" type="button" data-copy-invite>Copy message</button>
+              <a class="button subtle" data-mailto-invite href="#">Open email</a>
+            </div>
+          </article>
+        </section>
       </section>
     </main>
   </body>

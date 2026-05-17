@@ -490,6 +490,18 @@ p {
   margin-bottom: 10px;
 }
 
+.admin-login {
+  margin-inline: auto;
+  max-width: 860px;
+}
+
+.admin-shell[hidden],
+.admin-login[hidden],
+[data-tab-panel][hidden],
+.invite-output[hidden] {
+  display: none !important;
+}
+
 .admin-auth {
   align-items: end;
   background: rgba(255, 255, 255, 0.045);
@@ -500,6 +512,45 @@ p {
   grid-template-columns: minmax(260px, 1fr) auto auto;
   margin: 30px 0 18px;
   padding: 18px;
+}
+
+.admin-hero {
+  align-items: end;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.admin-tabs {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(141, 255, 178, 0.16);
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  margin: 28px 0 18px;
+  padding: 8px;
+}
+
+.admin-tabs button,
+.row-actions button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.admin-tabs button {
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.admin-tabs button.is-active {
+  background: rgba(52, 255, 98, 0.16);
+  color: var(--text);
 }
 
 .admin-toolbar,
@@ -518,6 +569,25 @@ p {
 .admin-actions {
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.admin-form-grid {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(141, 255, 178, 0.16);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+  margin: 22px 0;
+  padding: 18px;
+}
+
+.invite-form {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.invite-form .button {
+  align-self: end;
 }
 
 .metrics-grid {
@@ -646,6 +716,90 @@ p {
   font-size: 14px;
 }
 
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.row-actions button {
+  border: 1px solid rgba(141, 255, 178, 0.22);
+  border-radius: 999px;
+  color: var(--text);
+  padding: 7px 9px;
+}
+
+.row-actions button:hover {
+  border-color: rgba(52, 255, 98, 0.72);
+}
+
+.status-pill {
+  border: 1px solid rgba(141, 255, 178, 0.24);
+  border-radius: 999px;
+  color: var(--text);
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 950;
+  padding: 5px 9px;
+}
+
+.status-pill.trial {
+  background: rgba(57, 232, 255, 0.12);
+  border-color: rgba(57, 232, 255, 0.32);
+}
+
+.status-pill.lifetime {
+  background: rgba(52, 255, 98, 0.12);
+}
+
+.status-pill.expired,
+.status-pill.disabled {
+  background: rgba(255, 90, 95, 0.12);
+  border-color: rgba(255, 90, 95, 0.32);
+}
+
+.checkbox-field > label {
+  align-items: center;
+  color: rgba(232, 244, 234, 0.82);
+  display: flex;
+  font-size: 14px;
+  font-weight: 800;
+  gap: 8px;
+  min-height: 56px;
+}
+
+.checkbox-field input {
+  appearance: auto;
+  background: initial;
+  min-height: auto;
+  width: auto;
+}
+
+.form-field textarea {
+  background: rgba(2, 8, 5, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  outline: none;
+  padding: 15px;
+  resize: vertical;
+  width: 100%;
+}
+
+.invite-output {
+  display: grid;
+  gap: 14px;
+}
+
+.invite-code {
+  color: var(--green);
+  font-size: 18px;
+  font-weight: 950;
+}
+
 .beta {
   background:
     radial-gradient(circle at 18% 10%, rgba(52, 255, 98, 0.12), transparent 30%),
@@ -695,7 +849,8 @@ p {
 }
 
 .form-field input:focus,
-.form-field select:focus {
+.form-field select:focus,
+.form-field textarea:focus {
   border-color: rgba(52, 255, 98, 0.76);
   box-shadow: 0 0 0 3px rgba(52, 255, 98, 0.14);
 }
@@ -778,9 +933,16 @@ footer span {
 
 @media (max-width: 1060px) {
   .admin-auth,
+  .admin-form-grid,
+  .invite-form,
   .metrics-grid,
   .admin-panels {
     grid-template-columns: 1fr;
+  }
+
+  .admin-hero {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .policy-grid {
@@ -858,9 +1020,14 @@ footer span {
   }
 
   .admin-toolbar,
+  .admin-tabs,
   .table-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .admin-tabs button {
+    width: 100%;
   }
 
   .hero {
