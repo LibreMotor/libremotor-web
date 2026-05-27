@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="Libremotor is a private beta Hub for compatible C10 vehicle displays, with owner-verified activation and local app builds."
+      content="Libremotor is a private beta Hub for compatible B10 and C10 vehicle displays, with owner-verified activation and local app builds."
     >
     <title>Libremotor - Private beta for vehicle displays</title>
-    <meta name="turnstile-site-key" content="">
+    <meta name="turnstile-site-key" content="0x4AAAAAADXB1t0z1bNj8YEl">
     <link rel="icon" href="/assets/libremotor-icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/styles.css">
     <script src="/privacy.js" defer></script>
@@ -32,12 +32,13 @@
           <p class="eyebrow">Private beta</p>
           <h1>Your car. Your choice.</h1>
           <p class="lead">
-            A small Hub for compatible C10 displays.
+            A small Hub for compatible B10 and C10 displays.
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#beta">Join beta list</a>
           </div>
           <div class="signal-row" aria-label="Current beta focus">
+            <span>B10</span>
             <span>C10 BEV</span>
             <span>C10 REEV</span>
           </div>
@@ -65,6 +66,7 @@
             <span>Vehicle</span>
             <select name="vehicle_type" required>
               <option value="">Choose model</option>
+              <option value="b10">B10</option>
               <option value="c10_bev">C10 BEV</option>
               <option value="c10_reev">C10 REEV</option>
             </select>
@@ -112,7 +114,7 @@
           </label>
           <label class="form-field full">
             <span>Anything else?</span>
-            <textarea name="notes" rows="4" maxlength="1000" placeholder="Tell us what you want to test or what is not working well in your C10."></textarea>
+            <textarea name="notes" rows="4" maxlength="1000" placeholder="Tell us what you want to test or what is not working well in your car."></textarea>
           </label>
           <input class="bot-field" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div class="turnstile-slot" data-turnstile hidden></div>

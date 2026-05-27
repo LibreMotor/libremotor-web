@@ -251,6 +251,7 @@ function renderSignupMetrics() {
     ["Android Auto", appStats.get("android_auto_no_carlinkit") || 0],
     ["Trials", Number(accessStats.trial || 0)],
     ["Lifetime", Number(accessStats.lifetime || 0)],
+    ["B10", vehicleStats.get("b10") || 0],
     ["C10 BEV", vehicleStats.get("c10_bev") || 0],
     ["C10 REEV", vehicleStats.get("c10_reev") || 0],
     ["Expired", Number(accessStats.expired || 0)],
@@ -536,6 +537,7 @@ function normalizeVinInput(value) {
 }
 
 function formatVehicle(value) {
+  if (value === "b10") return "B10";
   if (value === "c10_bev") return "C10 BEV";
   if (value === "c10_reev") return "C10 REEV";
   return value || "-";

@@ -1,0 +1,7 @@
+name = "libremotor-apk-download-blocker"
+main = "src/index.js"
+compatibility_date = "2026-05-14"
+
+routes = [
+  { pattern = "libremotor.com/downloads/LibremotorHub-com.tt.incar.apk", zone_name = "libremotor.com" }
+]

@@ -31,10 +31,9 @@ The beta form posts to `https://api.libremotor.com/v1/beta-interest` and
 collects email, vehicle type, country, optional region, optional ownership
 duration, app interests, optional notes, locale, and source.
 
-To enable Turnstile, create a Cloudflare Turnstile widget for `libremotor.com`,
-put the widget site key into the `turnstile-site-key` meta tag in both
-`index.html` and `pt-BR/index.html`, and set `TURNSTILE_SECRET_KEY` on the API
-Worker before launch. Leave the meta tag empty until the Worker secret is ready.
+Turnstile is enabled through the `turnstile-site-key` meta tag in both
+`index.html` and `pt-BR/index.html`. The matching secret is stored as
+`TURNSTILE_SECRET_KEY` on the API Worker.
 
 ## Cloudflare cutover
 
