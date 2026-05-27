@@ -25,6 +25,17 @@ The repo is prepared for GitHub Pages:
 DNS points `libremotor.com` at GitHub Pages through Cloudflare. Cloudflare is
 the user-facing TLS edge while GitHub Pages manages the static origin.
 
+## Public Waitlist
+
+The beta form posts to `https://api.libremotor.com/v1/beta-interest` and
+collects email, vehicle type, country, optional region, optional ownership
+duration, app interests, optional notes, locale, and source.
+
+To enable Turnstile, create a Cloudflare Turnstile widget for `libremotor.com`,
+put the widget site key into the `turnstile-site-key` meta tag in both
+`index.html` and `pt-BR/index.html`, and set `TURNSTILE_SECRET_KEY` on the API
+Worker before launch. Leave the meta tag empty until the Worker secret is ready.
+
 ## Cloudflare cutover
 
 When a valid Cloudflare token is available, apply the DNS records with:

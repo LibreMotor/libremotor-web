@@ -8,6 +8,7 @@
       content="Libremotor is a private beta Hub for compatible C10 vehicle displays, with owner-verified activation and local app builds."
     >
     <title>Libremotor - Private beta for vehicle displays</title>
+    <meta name="turnstile-site-key" content="">
     <link rel="icon" href="/assets/libremotor-icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/styles.css">
     <script src="/privacy.js" defer></script>
@@ -72,6 +73,10 @@
             <span>Country</span>
             <input name="country" autocomplete="country-name" list="country-options-en" placeholder="Brazil" required>
           </label>
+          <label class="form-field">
+            <span>Region / city</span>
+            <input name="region" autocomplete="address-level1" placeholder="Sao Paulo">
+          </label>
           <datalist id="country-options-en">
             <option value="Brazil"></option>
             <option value="Portugal"></option>
@@ -82,6 +87,35 @@
             <option value="China"></option>
             <option value="United States"></option>
           </datalist>
+          <label class="form-field">
+            <span>Ownership</span>
+            <select name="ownership_duration">
+              <option value="">Prefer not to say</option>
+              <option value="shopping">Still deciding / buying soon</option>
+              <option value="under_1_month">Under 1 month</option>
+              <option value="1_6_months">1-6 months</option>
+              <option value="6_12_months">6-12 months</option>
+              <option value="over_1_year">Over 1 year</option>
+            </select>
+          </label>
+          <fieldset class="interest-options">
+            <legend>Interested apps</legend>
+            <label><input name="app_interests" type="checkbox" value="waze"> Waze</label>
+            <label><input name="app_interests" type="checkbox" value="android_auto_no_carlinkit"> Android Auto without Carlinkit</label>
+            <label><input name="app_interests" type="checkbox" value="youtube"> YouTube</label>
+            <label><input name="app_interests" type="checkbox" value="openautolink"> Phone projection</label>
+            <label><input name="app_interests" type="checkbox" value="other"> Other</label>
+          </fieldset>
+          <label class="form-field wide">
+            <span>Other apps</span>
+            <input name="other_app_interest" type="text" maxlength="160" placeholder="Music, podcasts, maps...">
+          </label>
+          <label class="form-field full">
+            <span>Anything else?</span>
+            <textarea name="notes" rows="4" maxlength="1000" placeholder="Tell us what you want to test or what is not working well in your C10."></textarea>
+          </label>
+          <input class="bot-field" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="turnstile-slot" data-turnstile hidden></div>
           <button class="button primary" type="submit">Join beta list</button>
           <p class="form-status" role="status" data-form-status></p>
         </form>

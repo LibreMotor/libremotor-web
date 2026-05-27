@@ -21,6 +21,7 @@ const loginStatusEl = document.querySelector("[data-login-status]");
 const adminStatusEl = document.querySelector("[data-admin-status]");
 const metricsEl = document.querySelector("[data-metrics]");
 const countryStatsEl = document.querySelector("[data-country-stats]");
+const appStatsEl = document.querySelector("[data-app-stats]");
 const dayStatsEl = document.querySelector("[data-day-stats]");
 const signupRowsEl = document.querySelector("[data-signup-rows]");
 const vehicleRowsEl = document.querySelector("[data-vehicle-rows]");
@@ -125,6 +126,7 @@ async function loadSignupPage(offset = 0) {
   applySignupPage(await fetchSignupPage(offset));
   renderSignupMetrics();
   renderStatList(countryStatsEl, state.signupStats?.by_country || []);
+  renderStatList(appStatsEl, state.signupStats?.by_app_interest || [], "app");
   renderStatList(dayStatsEl, state.signupStats?.by_day || [], "day");
   renderSignupRows();
   setAdminStatus(`Loaded ${pageSummary(state.signupPage, state.signups.length)} signups.`, "success");
@@ -198,6 +200,7 @@ function pageSummary(page, count) {
 function renderDashboard() {
   renderSignupMetrics();
   renderStatList(countryStatsEl, state.signupStats?.by_country || []);
+  renderStatList(appStatsEl, state.signupStats?.by_app_interest || [], "app");
   renderStatList(dayStatsEl, state.signupStats?.by_day || [], "day");
   renderSignupRows();
   renderVehicleRows();
@@ -209,6 +212,7 @@ function buildFallbackSignupStats(items) {
     updated_last_24h: items.filter((item) => Number(item.updated_at || 0) >= Date.now() / 1000 - 86400).length,
     by_vehicle_type: groupItems(items, "vehicle_type"),
     by_country: groupItems(items, "country"),
+    by_app_interest: groupAppInterests(items),
     by_day: groupItems(items.map((item) => ({ day: formatDay(item.updated_at) })), "day"),
   };
 }
@@ -224,14 +228,27 @@ function groupItems(items, field) {
     .map(([value, count]) => ({ value, count }));
 }
 
+function groupAppInterests(items) {
+  const expanded = [];
+  for (const item of items) {
+    for (const appInterest of item.app_interests || []) {
+      expanded.push({ appInterest });
+    }
+  }
+  return groupItems(expanded, "appInterest");
+}
+
 function renderSignupMetrics() {
   if (!metricsEl) return;
   const stats = state.signupStats || buildFallbackSignupStats(state.signups);
   const vehicleStats = new Map((stats.by_vehicle_type || []).map((entry) => [entry.value, entry.count]));
+  const appStats = new Map((stats.by_app_interest || []).map((entry) => [entry.value, entry.count]));
   const accessStats = state.vehicleStats || Object.fromEntries(groupItems(state.vehicles, "access").map((entry) => [entry.value, entry.count]));
   renderMetrics([
     ["Signups", stats.total ?? state.signups.length],
     ["Vehicles", state.vehicleStats?.total ?? state.vehiclePage.total ?? state.vehicles.length],
+    ["Waze", appStats.get("waze") || 0],
+    ["Android Auto", appStats.get("android_auto_no_carlinkit") || 0],
     ["Trials", Number(accessStats.trial || 0)],
     ["Lifetime", Number(accessStats.lifetime || 0)],
     ["C10 BEV", vehicleStats.get("c10_bev") || 0],
@@ -264,7 +281,7 @@ function renderStatList(container, entries, type = "value") {
   container.innerHTML = entries
     .slice(0, 12)
     .map((entry) => {
-      const label = type === "day" ? entry.day : entry.value || "Unknown";
+      const label = type === "day" ? entry.day : type === "app" ? formatAppInterest(entry.value) : entry.value || "Unknown";
       const count = Number(entry.count || 0);
       const width = Math.max(4, Math.round((count / max) * 100));
       return `
@@ -285,7 +302,7 @@ function renderSignupRows() {
   const items = state.signups;
 
   if (!items.length) {
-    signupRowsEl.innerHTML = `<tr><td colspan="6">${state.signupPage.query ? "No signups match this filter." : "No signups yet."}</td></tr>`;
+    signupRowsEl.innerHTML = `<tr><td colspan="9">${state.signupPage.query ? "No signups match this filter." : "No signups yet."}</td></tr>`;
     renderPagination("signup");
     return;
   }
@@ -297,7 +314,10 @@ function renderSignupRows() {
           <td>${escapeHtml(item.email)}</td>
           <td>${escapeHtml(formatVehicle(item.vehicle_type))}</td>
           <td>${escapeHtml(item.country)}</td>
-          <td>${escapeHtml(item.locale || "-")}</td>
+          <td>${escapeHtml(item.region || "-")}</td>
+          <td>${escapeHtml(formatOwnershipDuration(item.ownership_duration))}</td>
+          <td>${escapeHtml(formatAppInterests(item))}</td>
+          <td>${escapeHtml(formatSignupNotes(item))}</td>
           <td>${escapeHtml(item.source || "-")}</td>
           <td>${escapeHtml(formatDateTime(item.updated_at))}</td>
         </tr>
@@ -453,13 +473,30 @@ function exportCsv() {
     setAdminStatus("No signup data to export.", "error");
     return;
   }
-  const header = ["email", "vehicle_type", "country", "locale", "source", "created_at", "updated_at"];
+  const header = [
+    "email",
+    "vehicle_type",
+    "country",
+    "region",
+    "ownership_duration",
+    "app_interests",
+    "other_app_interest",
+    "notes",
+    "locale",
+    "source",
+    "created_at",
+    "updated_at",
+  ];
   const csv = [
     header.join(","),
     ...state.signups.map((item) =>
       header
         .map((field) => {
-          const value = field.endsWith("_at") ? formatDateTime(item[field]) : item[field] || "";
+          const value = field === "app_interests"
+            ? (item.app_interests || []).join(";")
+            : field.endsWith("_at")
+              ? formatDateTime(item[field])
+              : item[field] || "";
           return `"${String(value).replaceAll('"', '""')}"`;
         })
         .join(","),
@@ -502,6 +539,36 @@ function formatVehicle(value) {
   if (value === "c10_bev") return "C10 BEV";
   if (value === "c10_reev") return "C10 REEV";
   return value || "-";
+}
+
+function formatOwnershipDuration(value) {
+  if (value === "shopping") return "Shopping";
+  if (value === "under_1_month") return "<1 month";
+  if (value === "1_6_months") return "1-6 months";
+  if (value === "6_12_months") return "6-12 months";
+  if (value === "over_1_year") return ">1 year";
+  return "-";
+}
+
+function formatAppInterest(value) {
+  if (value === "waze") return "Waze";
+  if (value === "android_auto_no_carlinkit") return "Android Auto";
+  if (value === "youtube") return "YouTube";
+  if (value === "openautolink") return "Phone projection";
+  if (value === "other") return "Other";
+  return value || "Unknown";
+}
+
+function formatAppInterests(item) {
+  const selected = (item.app_interests || []).map(formatAppInterest);
+  if (item.other_app_interest) selected.push(item.other_app_interest);
+  return selected.length ? selected.join(", ") : "-";
+}
+
+function formatSignupNotes(item) {
+  const value = String(item.notes || "").replace(/\s+/g, " ").trim();
+  if (!value) return "-";
+  return value.length > 120 ? `${value.slice(0, 117)}...` : value;
 }
 
 function formatAccess(value) {
