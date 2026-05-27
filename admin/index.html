@@ -80,54 +80,72 @@
             <div class="table-header">
               <h2 id="user-table-title">Users</h2>
               <div class="admin-actions">
-                <label class="form-field compact">
-                  <span>Filter</span>
-                  <input name="filter" type="search" placeholder="Email, country, app, note..." data-user-filter>
-                </label>
-                <label class="form-field compact short">
-                  <span>Status</span>
+	                <label class="form-field compact">
+	                  <span>Filter</span>
+	                  <input name="filter" type="search" placeholder="Search any user field..." data-user-filter>
+	                </label>
+	                <label class="form-field compact short">
+	                  <span>Status</span>
                   <select name="status_filter" data-user-status-filter>
                     <option value="">All</option>
                     <option value="waitlist">Waitlist</option>
                     <option value="invited">Invited</option>
                     <option value="tester">Tester</option>
-                    <option value="disabled">Disabled</option>
-                  </select>
-                </label>
-                <button class="button subtle" type="button" data-export-csv>Export CSV</button>
-              </div>
-            </div>
-            <div class="table-scroll">
-              <table class="admin-table">
-                <thead>
-                  <tr>
-                    <th>Email</th>
-                    <th>Status</th>
-                    <th>Vehicle</th>
-                    <th>Country</th>
-                    <th>Region</th>
-                    <th>Owns</th>
-                    <th>Apps</th>
-                    <th>VIN</th>
-                    <th>Invite</th>
-                    <th>Notes</th>
-                    <th>Source</th>
-                    <th>Updated</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody data-user-rows></tbody>
-              </table>
-            </div>
-            <div class="table-pagination">
-              <span data-user-page-label>0/0</span>
-              <div class="admin-actions">
-                <button class="button subtle" type="button" data-user-prev>Previous</button>
-                <button class="button subtle" type="button" data-user-next>Next</button>
-              </div>
-            </div>
-          </section>
-        </section>
+	                    <option value="disabled">Disabled</option>
+	                  </select>
+	                </label>
+	                <label class="form-field compact short">
+	                  <span>Sort</span>
+	                  <select name="user_sort" data-user-sort-select>
+	                    <option value="updated_at">Updated</option>
+	                    <option value="email">Email</option>
+	                    <option value="status">Status</option>
+	                    <option value="vehicle_type">Vehicle</option>
+	                    <option value="country">Country</option>
+	                    <option value="region">Region</option>
+	                    <option value="ownership_duration">Ownership</option>
+	                    <option value="app_interests">Apps</option>
+	                    <option value="source">Source</option>
+	                    <option value="created_at">Created</option>
+	                    <option value="invited_at">Invited</option>
+	                    <option value="last_login_at">Last login</option>
+	                  </select>
+	                </label>
+	                <button class="button subtle sort-direction" type="button" data-user-sort-direction>Desc</button>
+	                <button class="button subtle" type="button" data-export-csv>Export CSV</button>
+	              </div>
+	            </div>
+	            <div class="users-workspace">
+	              <div>
+	                <div class="table-scroll users-table-scroll">
+	                  <table class="admin-table users-table">
+	                    <thead>
+	                      <tr>
+	                        <th><button type="button" data-user-sort="email">Email</button></th>
+	                        <th><button type="button" data-user-sort="status">Status</button></th>
+	                        <th><button type="button" data-user-sort="vehicle_type">Vehicle</button></th>
+	                        <th><button type="button" data-user-sort="country">Country</button></th>
+	                        <th><button type="button" data-user-sort="updated_at">Updated</button></th>
+	                        <th>Actions</th>
+	                      </tr>
+	                    </thead>
+	                    <tbody data-user-rows></tbody>
+	                  </table>
+	                </div>
+	                <div class="table-pagination">
+	                  <span data-user-page-label>0/0</span>
+	                  <div class="admin-actions">
+	                    <button class="button subtle" type="button" data-user-prev>Previous</button>
+	                    <button class="button subtle" type="button" data-user-next>Next</button>
+	                  </div>
+	                </div>
+	              </div>
+	              <aside class="user-detail-panel" data-user-details>
+	                <p class="detail-empty">Select a user to inspect properties.</p>
+	              </aside>
+	            </div>
+	          </section>
+	        </section>
 
         <section data-tab-panel="vehicles" hidden>
           <form class="admin-form-grid" data-access-form>

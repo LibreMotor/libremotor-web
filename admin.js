@@ -1,14 +1,17 @@
 const API_BASE_URL = "https://api.libremotor.com";
 const TOKEN_STORAGE_KEY = "libremotor.adminToken";
-const PAGE_LIMIT = 50;
+const USER_PAGE_LIMIT = 10;
+const VEHICLE_PAGE_LIMIT = 50;
 
 const state = {
   users: [],
   userStats: null,
-  userPage: { limit: PAGE_LIMIT, offset: 0, total: 0, filteredTotal: 0, nextOffset: null, query: "", status: "" },
+  selectedUserId: null,
+  userSort: { field: "updated_at", direction: "desc" },
+  userPage: { limit: USER_PAGE_LIMIT, offset: 0, total: 0, filteredTotal: 0, nextOffset: null, query: "", status: "" },
   vehicles: [],
   vehicleStats: null,
-  vehiclePage: { limit: PAGE_LIMIT, offset: 0, total: 0, filteredTotal: 0, nextOffset: null, query: "" },
+  vehiclePage: { limit: VEHICLE_PAGE_LIMIT, offset: 0, total: 0, filteredTotal: 0, nextOffset: null, query: "" },
   activeTab: "overview",
   lastInvite: null,
 };
@@ -24,9 +27,12 @@ const countryStatsEl = document.querySelector("[data-country-stats]");
 const appStatsEl = document.querySelector("[data-app-stats]");
 const dayStatsEl = document.querySelector("[data-day-stats]");
 const userRowsEl = document.querySelector("[data-user-rows]");
+const userDetailsEl = document.querySelector("[data-user-details]");
 const vehicleRowsEl = document.querySelector("[data-vehicle-rows]");
 const userFilterInput = document.querySelector("[data-user-filter]");
 const userStatusFilter = document.querySelector("[data-user-status-filter]");
+const userSortSelect = document.querySelector("[data-user-sort-select]");
+const userSortDirectionButton = document.querySelector("[data-user-sort-direction]");
 const vehicleFilterInput = document.querySelector("[data-vehicle-filter]");
 const userPageLabel = document.querySelector("[data-user-page-label]");
 const userPrevButton = document.querySelector("[data-user-prev]");
@@ -143,22 +149,24 @@ async function loadVehiclePage(offset = 0) {
 
 async function fetchUserPage(offset = 0) {
   return await api(buildListPath("/v1/admin/users", {
-    limit: PAGE_LIMIT,
+    limit: USER_PAGE_LIMIT,
     offset,
     query: userFilterInput?.value || "",
     status: userStatusFilter?.value || "",
+    sort: state.userSort.field,
+    direction: state.userSort.direction,
   }));
 }
 
 async function fetchVehiclePage(offset = 0) {
   return await api(buildListPath("/v1/admin/vehicles", {
-    limit: PAGE_LIMIT,
+    limit: VEHICLE_PAGE_LIMIT,
     offset,
     query: vehicleFilterInput?.value || "",
   }));
 }
 
-function buildListPath(path, { limit, offset, query, status = "" }) {
+function buildListPath(path, { limit, offset, query, status = "", sort = "", direction = "" }) {
   const params = new URLSearchParams({
     limit: String(limit),
     offset: String(Math.max(0, Number(offset) || 0)),
@@ -167,6 +175,10 @@ function buildListPath(path, { limit, offset, query, status = "" }) {
   if (cleanQuery) params.set("q", cleanQuery);
   const cleanStatus = String(status || "").trim();
   if (cleanStatus) params.set("status", cleanStatus);
+  const cleanSort = String(sort || "").trim();
+  if (cleanSort) params.set("sort", cleanSort);
+  const cleanDirection = String(direction || "").trim();
+  if (cleanDirection) params.set("direction", cleanDirection);
   return `${path}?${params.toString()}`;
 }
 
@@ -175,6 +187,13 @@ function applyUserPage(response) {
   state.userStats = response.stats || buildFallbackUserStats(state.users);
   state.userPage = normalizePage(response, userFilterInput?.value || "");
   state.userPage.status = String(response.status || userStatusFilter?.value || "").trim();
+  state.userSort = {
+    field: String(response.sort || state.userSort.field || "updated_at"),
+    direction: String(response.direction || state.userSort.direction || "desc"),
+  };
+  if (!state.selectedUserId || !state.users.some((item) => item.id === state.selectedUserId)) {
+    state.selectedUserId = state.users[0]?.id || null;
+  }
 }
 
 function applyVehiclePage(response) {
@@ -185,7 +204,7 @@ function applyVehiclePage(response) {
 
 function normalizePage(response, query) {
   return {
-    limit: Number(response.limit || PAGE_LIMIT),
+    limit: Number(response.limit || USER_PAGE_LIMIT),
     offset: Number(response.offset || 0),
     total: Number(response.total || 0),
     filteredTotal: Number(response.filtered_total ?? response.total ?? 0),
@@ -208,6 +227,7 @@ function renderDashboard() {
   renderStatList(appStatsEl, state.userStats?.by_app_interest || [], "app");
   renderStatList(dayStatsEl, state.userStats?.by_day || [], "day");
   renderUserRows();
+  renderUserDetails();
   renderVehicleRows();
 }
 
@@ -314,26 +334,21 @@ function renderUserRows() {
   const items = state.users;
 
   if (!items.length) {
-    userRowsEl.innerHTML = `<tr><td colspan="13">${state.userPage.query || state.userPage.status ? "No users match this filter." : "No users yet."}</td></tr>`;
+    userRowsEl.innerHTML = `<tr><td colspan="6">${state.userPage.query || state.userPage.status ? "No users match this filter." : "No users yet."}</td></tr>`;
+    renderUserDetails();
     renderPagination("user");
+    renderUserSortState();
     return;
   }
 
   userRowsEl.innerHTML = items
     .map(
       (item, index) => `
-        <tr>
-          <td>${escapeHtml(item.email)}</td>
+        <tr class="clickable-row ${item.id === state.selectedUserId ? "is-selected" : ""}" tabindex="0" data-user-index="${index}">
+          <td class="email-cell">${escapeHtml(item.email)}</td>
           <td><span class="status-pill ${escapeHtml(item.status)}">${escapeHtml(formatUserStatus(item.status))}</span></td>
           <td>${escapeHtml(formatVehicle(item.vehicle_type))}</td>
           <td>${escapeHtml(item.country)}</td>
-          <td>${escapeHtml(item.region || "-")}</td>
-          <td>${escapeHtml(formatOwnershipDuration(item.ownership_duration))}</td>
-          <td>${escapeHtml(formatAppInterests(item))}</td>
-          <td>${escapeHtml(item.bound_vin_suffix ? `...${item.bound_vin_suffix}` : "-")}</td>
-          <td>${escapeHtml(formatInviteState(item))}</td>
-          <td>${escapeHtml(formatUserNotes(item))}</td>
-          <td>${escapeHtml(item.source || "-")}</td>
           <td>${escapeHtml(formatDateTime(item.updated_at))}</td>
           <td>
             <div class="row-actions">
@@ -345,8 +360,72 @@ function renderUserRows() {
         </tr>
       `,
     )
-    .join("");
+	    .join("");
+  renderUserSortState();
   renderPagination("user");
+  renderUserDetails();
+}
+
+function renderUserDetails() {
+  if (!userDetailsEl) return;
+  const user = state.users.find((item) => item.id === state.selectedUserId);
+  if (!user) {
+    userDetailsEl.innerHTML = `<p class="detail-empty">${state.users.length ? "Select a user to inspect properties." : "No user selected."}</p>`;
+    return;
+  }
+
+  const properties = [
+    ["Email", user.email],
+    ["Status", formatUserStatus(user.status)],
+    ["Vehicle", formatVehicle(user.vehicle_type)],
+    ["Country", user.country || "-"],
+    ["Region", user.region || "-"],
+    ["Owns", formatOwnershipDuration(user.ownership_duration)],
+    ["Apps", formatAppInterests(user)],
+    ["Other app", user.other_app_interest || "-"],
+    ["VIN", user.bound_vin_suffix ? `...${user.bound_vin_suffix}` : "-"],
+    ["Invite", formatInviteState(user)],
+    ["Invite count", Number(user.invite_count || 0).toLocaleString()],
+    ["Language", user.locale || "-"],
+    ["Source", user.source || "-"],
+    ["Created", formatDateTime(user.created_at)],
+    ["Updated", formatDateTime(user.updated_at)],
+    ["Invited", formatDateTime(user.invited_at)],
+    ["Last login", formatDateTime(user.last_login_at)],
+    ["Notes", user.notes || "-"],
+  ];
+
+  userDetailsEl.innerHTML = `
+    <div class="user-detail-heading">
+      <div>
+        <h3>${escapeHtml(user.email)}</h3>
+        <span class="status-pill ${escapeHtml(user.status)}">${escapeHtml(formatUserStatus(user.status))}</span>
+      </div>
+    </div>
+    <dl class="detail-list">
+      ${properties.map(([label, value]) => `
+        <div>
+          <dt>${escapeHtml(label)}</dt>
+          <dd>${escapeHtml(value)}</dd>
+        </div>
+      `).join("")}
+    </dl>
+    <div class="row-actions detail-actions">
+      <button type="button" data-user-detail-action="invite">Invite</button>
+      <button type="button" data-user-detail-action="tester">Tester</button>
+      <button type="button" data-user-detail-action="disable">Disable</button>
+    </div>
+  `;
+}
+
+function renderUserSortState() {
+  if (userSortSelect) userSortSelect.value = state.userSort.field;
+  if (userSortDirectionButton) userSortDirectionButton.textContent = state.userSort.direction === "asc" ? "Asc" : "Desc";
+  document.querySelectorAll("[data-user-sort]").forEach((button) => {
+    const active = button.dataset.userSort === state.userSort.field;
+    button.classList.toggle("is-active", active);
+    button.dataset.direction = active ? state.userSort.direction : "";
+  });
 }
 
 function renderVehicleRows() {
@@ -565,6 +644,7 @@ function logout() {
   localStorage.removeItem(TOKEN_STORAGE_KEY);
   if (tokenInput) tokenInput.value = "";
   state.users = [];
+  state.selectedUserId = null;
   state.vehicles = [];
   state.userStats = null;
   state.vehicleStats = null;
@@ -687,6 +767,32 @@ userStatusFilter?.addEventListener("change", () => {
     setAdminStatus(error.message || "Could not load users.", "error");
   });
 });
+userSortSelect?.addEventListener("change", () => {
+  state.userSort.field = userSortSelect.value || "updated_at";
+  loadUserPage(0).catch((error) => {
+    setAdminStatus(error.message || "Could not sort users.", "error");
+  });
+});
+userSortDirectionButton?.addEventListener("click", () => {
+  state.userSort.direction = state.userSort.direction === "asc" ? "desc" : "asc";
+  loadUserPage(0).catch((error) => {
+    setAdminStatus(error.message || "Could not sort users.", "error");
+  });
+});
+document.querySelectorAll("[data-user-sort]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const field = button.dataset.userSort;
+    if (state.userSort.field === field) {
+      state.userSort.direction = state.userSort.direction === "asc" ? "desc" : "asc";
+    } else {
+      state.userSort.field = field;
+      state.userSort.direction = field === "updated_at" ? "desc" : "asc";
+    }
+    loadUserPage(0).catch((error) => {
+      setAdminStatus(error.message || "Could not sort users.", "error");
+    });
+  });
+});
 vehicleFilterInput?.addEventListener("input", debounce(() => loadVehiclePage(0).catch((error) => {
   setAdminStatus(error.message || "Could not load vehicles.", "error");
 }), 250));
@@ -747,9 +853,39 @@ vehicleRowsEl?.addEventListener("click", async (event) => {
 
 userRowsEl?.addEventListener("click", async (event) => {
   const button = event.target.closest("[data-user-action]");
-  if (!button) return;
+  if (!button) {
+    const row = event.target.closest("[data-user-index]");
+    if (!row) return;
+    const user = state.users[Number(row.dataset.userIndex)];
+    if (!user) return;
+    state.selectedUserId = user.id;
+    renderUserRows();
+    return;
+  }
   try {
     await runUserAction(button.dataset.userAction, state.users[Number(button.dataset.userIndex)]);
+  } catch (error) {
+    setAdminStatus(error.message || "Could not update user.", "error");
+  }
+});
+
+userRowsEl?.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  const row = event.target.closest("[data-user-index]");
+  if (!row) return;
+  event.preventDefault();
+  const user = state.users[Number(row.dataset.userIndex)];
+  if (!user) return;
+  state.selectedUserId = user.id;
+  renderUserRows();
+});
+
+userDetailsEl?.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-user-detail-action]");
+  if (!button) return;
+  try {
+    const user = state.users.find((item) => item.id === state.selectedUserId);
+    await runUserAction(button.dataset.userDetailAction, user);
   } catch (error) {
     setAdminStatus(error.message || "Could not update user.", "error");
   }
