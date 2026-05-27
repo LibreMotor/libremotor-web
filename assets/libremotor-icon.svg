@@ -1,9 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" role="img" aria-label="Libremotor">
-  <path fill="#07100B" d="M18 18h72a10 10 0 0 1 10 10v52a10 10 0 0 1-10 10H18A10 10 0 0 1 8 80V28a10 10 0 0 1 10-10Z"/>
-  <path fill="#112018" d="M22 22h64a6 6 0 0 1 6 6v48a6 6 0 0 1-6 6H22a6 6 0 0 1-6-6V28a6 6 0 0 1 6-6Z"/>
-  <path fill="#23F46E" d="M22 78h64v4H22z"/>
-  <path fill="none" stroke="#23F46E" stroke-linecap="round" stroke-width="5" d="m31 72 12-39 11 25 11-25 12 39"/>
-  <path fill="none" stroke="#DFFFEA" stroke-linecap="round" stroke-width="4" d="m43 33 11 25 11-25"/>
-  <path fill="#23F46E" d="M50 63h8v15h-8z"/>
-  <path fill="#23F46E" d="m54 45 10 20H44z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Libremotor">
+  <path fill="#07100B" d="M128 58 L384 58 L480 256 L384 454 L128 454 L32 256 Z"/>
+  <path fill="#112018" d="M148 90 L364 90 L444 256 L364 422 L148 422 L68 256 Z"/>
+  <path fill="#07100B" stroke="#07100B" stroke-linejoin="miter" stroke-width="14" d="M240 128 496 640H784L528 128ZM608 0 864 512 736 768H416L288 512H0L256 1024H896L1152 512L896 0Z" transform="translate(160.684 352.256) scale(0.188 -0.188)"/>
+  <path fill="#07100B" stroke="#07100B" stroke-linejoin="miter" stroke-width="14" d="M256 0 0 512 256 1024H544L288 512L416 256H1024L896 0Z" transform="translate(134.74 352.256) scale(0.188 -0.188)"/>
+  <path fill="#DFFFEA" d="M240 128 496 640H784L528 128ZM608 0 864 512 736 768H416L288 512H0L256 1024H896L1152 512L896 0Z" transform="translate(160.684 352.256) scale(0.188 -0.188)"/>
+  <path fill="#23F46E" d="M256 0 0 512 256 1024H544L288 512L416 256H1024L896 0Z" transform="translate(134.74 352.256) scale(0.188 -0.188)"/>
 </svg>
