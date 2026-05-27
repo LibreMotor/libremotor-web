@@ -89,6 +89,9 @@
             <p>
               Generated packages are intended for the registered vehicle and profile. Sharing them with another vehicle, account, or person may cause activation to fail or the app to stop.
             </p>
+            <p>
+              To keep generated APK updates installable on the same vehicle, Libremotor may synchronize encrypted vehicle-bound signing key material and the public signing certificate digest for that vehicle. That key material is not intended for public distribution or transfer to another vehicle.
+            </p>
           </article>
 
           <article class="clause" id="third-party-apps">
@@ -136,14 +139,14 @@
           <article class="clause" id="data-collected">
             <h3>1. Data we collect</h3>
             <p>
-              The beta list collects email, vehicle type, country, optional region or city, optional ownership duration, app interests, optional free-text notes, language, source, submission time, and anti-abuse metadata such as Turnstile verification status and a pseudonymous network hash. We do not ask for VIN on the public beta list. Activation and generated packages may send VIN or VIN-derived identifiers, device identifiers, package names, app versions, install profile, license status, acceptance status, timestamps, and diagnostic events. If you accept analytics, the site loads self-hosted Umami from umami.sabino.pro to collect page views and basic visit information such as referrer, browser, device, approximate region, and timestamps.
+              The beta list collects email, vehicle type, country, optional region or city, optional ownership duration, app interests, optional free-text notes, language, source, submission time, and anti-abuse metadata such as Turnstile verification status and a pseudonymous network hash. We do not ask for VIN on the public beta list. If you receive a beta access code, activation may bind your email invite to the VIN-derived identifier and device identifier reported by Libremotor Hub in the car. Activation and generated packages may send VIN or VIN-derived identifiers, device identifiers, package names, app versions, install profile, license status, acceptance status, timestamps, diagnostic events, encrypted vehicle-bound APK signing key material, and public signing certificate digests. If you accept analytics, the site loads self-hosted Umami from umami.sabino.pro to collect page views and basic visit information such as referrer, browser, device, approximate region, and timestamps.
             </p>
           </article>
 
           <article class="clause" id="data-use">
             <h3>2. How we use it</h3>
             <p>
-              We use this data to manage beta access, contact interested users, understand which vehicles, countries, and apps to prioritize, validate registered vehicles, prevent package sharing, diagnose failures, improve compatibility, protect the service, understand website demand, and answer support requests.
+              We use this data to manage beta access, contact interested users, understand which vehicles, countries, and apps to prioritize, bind invited testers to activated vehicles, validate registered vehicles, preserve APK update compatibility for a registered vehicle, prevent package sharing, diagnose failures, improve compatibility, protect the service, understand website demand, and answer support requests.
             </p>
           </article>
 
@@ -157,7 +160,7 @@
           <article class="clause" id="retention">
             <h3>4. Retention</h3>
             <p>
-              We keep beta interest records while the beta is active or while we may contact you about access. Activation and diagnostic records are kept as long as needed to operate, debug, secure, and audit vehicle-bound access.
+              We keep beta interest records while the beta is active or while we may contact you about access. Activation, signing-key, and diagnostic records are kept as long as needed to operate, debug, secure, and audit vehicle-bound access.
             </p>
           </article>
 

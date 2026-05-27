@@ -683,6 +683,10 @@ p {
   width: min(100%, 360px);
 }
 
+.form-field.compact.short {
+  max-width: 180px;
+}
+
 .table-scroll {
   border: 1px solid rgba(141, 255, 178, 0.16);
   border-radius: 8px;
@@ -691,7 +695,7 @@ p {
 
 .admin-table {
   border-collapse: collapse;
-  min-width: 980px;
+  min-width: 1180px;
   width: 100%;
 }
 
@@ -774,6 +778,19 @@ p {
 }
 
 .status-pill.lifetime {
+  background: rgba(35, 244, 110, 0.12);
+}
+
+.status-pill.waitlist {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.status-pill.invited {
+  background: rgba(57, 232, 255, 0.12);
+  border-color: rgba(57, 232, 255, 0.32);
+}
+
+.status-pill.tester {
   background: rgba(35, 244, 110, 0.12);
 }
 

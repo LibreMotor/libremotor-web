@@ -39,7 +39,7 @@
           <div>
             <p class="eyebrow">Private console</p>
             <h1>Beta Ops</h1>
-            <p class="document-lead">Signups, vehicle access, trial expiry, lifetime approvals, and invite delivery.</p>
+            <p class="document-lead">Users, vehicle access, trial expiry, lifetime approvals, and invite delivery.</p>
           </div>
           <div class="admin-actions">
             <button class="button subtle" type="button" data-refresh>Refresh</button>
@@ -49,6 +49,7 @@
 
         <nav class="admin-tabs" aria-label="Admin sections">
           <button type="button" class="is-active" data-tab-button="overview">Overview</button>
+          <button type="button" data-tab-button="users">Users</button>
           <button type="button" data-tab-button="vehicles">VIN Access</button>
           <button type="button" data-tab-button="invite">Invite</button>
         </nav>
@@ -56,7 +57,7 @@
         <p class="form-status" role="status" data-admin-status></p>
 
         <section data-tab-panel="overview">
-          <section class="metrics-grid" aria-label="Signup metrics" data-metrics></section>
+          <section class="metrics-grid" aria-label="User metrics" data-metrics></section>
 
           <section class="admin-panels">
             <article class="admin-panel">
@@ -72,14 +73,26 @@
               <div class="stat-list" data-day-stats></div>
             </article>
           </section>
+        </section>
 
-          <section class="admin-table-wrap" aria-labelledby="signup-table-title">
+        <section data-tab-panel="users" hidden>
+          <section class="admin-table-wrap" aria-labelledby="user-table-title">
             <div class="table-header">
-              <h2 id="signup-table-title">Latest signups</h2>
+              <h2 id="user-table-title">Users</h2>
               <div class="admin-actions">
                 <label class="form-field compact">
                   <span>Filter</span>
-                  <input name="filter" type="search" placeholder="Email, country, app, note..." data-signup-filter>
+                  <input name="filter" type="search" placeholder="Email, country, app, note..." data-user-filter>
+                </label>
+                <label class="form-field compact short">
+                  <span>Status</span>
+                  <select name="status_filter" data-user-status-filter>
+                    <option value="">All</option>
+                    <option value="waitlist">Waitlist</option>
+                    <option value="invited">Invited</option>
+                    <option value="tester">Tester</option>
+                    <option value="disabled">Disabled</option>
+                  </select>
                 </label>
                 <button class="button subtle" type="button" data-export-csv>Export CSV</button>
               </div>
@@ -89,24 +102,28 @@
                 <thead>
                   <tr>
                     <th>Email</th>
+                    <th>Status</th>
                     <th>Vehicle</th>
                     <th>Country</th>
                     <th>Region</th>
                     <th>Owns</th>
                     <th>Apps</th>
+                    <th>VIN</th>
+                    <th>Invite</th>
                     <th>Notes</th>
                     <th>Source</th>
                     <th>Updated</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody data-signup-rows></tbody>
+                <tbody data-user-rows></tbody>
               </table>
             </div>
             <div class="table-pagination">
-              <span data-signup-page-label>0/0</span>
+              <span data-user-page-label>0/0</span>
               <div class="admin-actions">
-                <button class="button subtle" type="button" data-signup-prev>Previous</button>
-                <button class="button subtle" type="button" data-signup-next>Next</button>
+                <button class="button subtle" type="button" data-user-prev>Previous</button>
+                <button class="button subtle" type="button" data-user-next>Next</button>
               </div>
             </div>
           </section>
@@ -180,10 +197,6 @@
             <label class="form-field">
               <span>Email</span>
               <input name="email" type="email" placeholder="owner@example.com" required>
-            </label>
-            <label class="form-field">
-              <span>VIN</span>
-              <input name="vin" type="text" minlength="17" maxlength="17" placeholder="17 characters" required>
             </label>
             <label class="form-field">
               <span>Vehicle</span>

@@ -3,9 +3,9 @@ const TOKEN_STORAGE_KEY = "libremotor.adminToken";
 const PAGE_LIMIT = 50;
 
 const state = {
-  signups: [],
-  signupStats: null,
-  signupPage: { limit: PAGE_LIMIT, offset: 0, total: 0, filteredTotal: 0, nextOffset: null, query: "" },
+  users: [],
+  userStats: null,
+  userPage: { limit: PAGE_LIMIT, offset: 0, total: 0, filteredTotal: 0, nextOffset: null, query: "", status: "" },
   vehicles: [],
   vehicleStats: null,
   vehiclePage: { limit: PAGE_LIMIT, offset: 0, total: 0, filteredTotal: 0, nextOffset: null, query: "" },
@@ -23,13 +23,14 @@ const metricsEl = document.querySelector("[data-metrics]");
 const countryStatsEl = document.querySelector("[data-country-stats]");
 const appStatsEl = document.querySelector("[data-app-stats]");
 const dayStatsEl = document.querySelector("[data-day-stats]");
-const signupRowsEl = document.querySelector("[data-signup-rows]");
+const userRowsEl = document.querySelector("[data-user-rows]");
 const vehicleRowsEl = document.querySelector("[data-vehicle-rows]");
-const signupFilterInput = document.querySelector("[data-signup-filter]");
+const userFilterInput = document.querySelector("[data-user-filter]");
+const userStatusFilter = document.querySelector("[data-user-status-filter]");
 const vehicleFilterInput = document.querySelector("[data-vehicle-filter]");
-const signupPageLabel = document.querySelector("[data-signup-page-label]");
-const signupPrevButton = document.querySelector("[data-signup-prev]");
-const signupNextButton = document.querySelector("[data-signup-next]");
+const userPageLabel = document.querySelector("[data-user-page-label]");
+const userPrevButton = document.querySelector("[data-user-prev]");
+const userNextButton = document.querySelector("[data-user-next]");
 const vehiclePageLabel = document.querySelector("[data-vehicle-page-label]");
 const vehiclePrevButton = document.querySelector("[data-vehicle-prev]");
 const vehicleNextButton = document.querySelector("[data-vehicle-next]");
@@ -108,43 +109,44 @@ function showLogin() {
 
 async function refreshAll() {
   setAdminStatus("Loading admin data...");
-  const [signups, vehicles] = await Promise.all([
-    fetchSignupPage(0),
+  const [users, vehicles] = await Promise.all([
+    fetchUserPage(0),
     fetchVehiclePage(0),
   ]);
-  applySignupPage(signups);
+  applyUserPage(users);
   applyVehiclePage(vehicles);
   renderDashboard();
   setAdminStatus(
-    `Loaded ${pageSummary(state.signupPage, state.signups.length)} signups and ${pageSummary(state.vehiclePage, state.vehicles.length)} vehicles.`,
+    `Loaded ${pageSummary(state.userPage, state.users.length)} users and ${pageSummary(state.vehiclePage, state.vehicles.length)} vehicles.`,
     "success",
   );
 }
 
-async function loadSignupPage(offset = 0) {
-  setAdminStatus("Loading signups...");
-  applySignupPage(await fetchSignupPage(offset));
-  renderSignupMetrics();
-  renderStatList(countryStatsEl, state.signupStats?.by_country || []);
-  renderStatList(appStatsEl, state.signupStats?.by_app_interest || [], "app");
-  renderStatList(dayStatsEl, state.signupStats?.by_day || [], "day");
-  renderSignupRows();
-  setAdminStatus(`Loaded ${pageSummary(state.signupPage, state.signups.length)} signups.`, "success");
+async function loadUserPage(offset = 0) {
+  setAdminStatus("Loading users...");
+  applyUserPage(await fetchUserPage(offset));
+  renderUserMetrics();
+  renderStatList(countryStatsEl, state.userStats?.by_country || []);
+  renderStatList(appStatsEl, state.userStats?.by_app_interest || [], "app");
+  renderStatList(dayStatsEl, state.userStats?.by_day || [], "day");
+  renderUserRows();
+  setAdminStatus(`Loaded ${pageSummary(state.userPage, state.users.length)} users.`, "success");
 }
 
 async function loadVehiclePage(offset = 0) {
   setAdminStatus("Loading vehicles...");
   applyVehiclePage(await fetchVehiclePage(offset));
-  renderSignupMetrics();
+  renderUserMetrics();
   renderVehicleRows();
   setAdminStatus(`Loaded ${pageSummary(state.vehiclePage, state.vehicles.length)} vehicles.`, "success");
 }
 
-async function fetchSignupPage(offset = 0) {
-  return await api(buildListPath("/v1/admin/beta-interest", {
+async function fetchUserPage(offset = 0) {
+  return await api(buildListPath("/v1/admin/users", {
     limit: PAGE_LIMIT,
     offset,
-    query: signupFilterInput?.value || "",
+    query: userFilterInput?.value || "",
+    status: userStatusFilter?.value || "",
   }));
 }
 
@@ -156,20 +158,23 @@ async function fetchVehiclePage(offset = 0) {
   }));
 }
 
-function buildListPath(path, { limit, offset, query }) {
+function buildListPath(path, { limit, offset, query, status = "" }) {
   const params = new URLSearchParams({
     limit: String(limit),
     offset: String(Math.max(0, Number(offset) || 0)),
   });
   const cleanQuery = String(query || "").trim();
   if (cleanQuery) params.set("q", cleanQuery);
+  const cleanStatus = String(status || "").trim();
+  if (cleanStatus) params.set("status", cleanStatus);
   return `${path}?${params.toString()}`;
 }
 
-function applySignupPage(response) {
-  state.signups = Array.isArray(response.items) ? response.items : [];
-  state.signupStats = response.stats || buildFallbackSignupStats(state.signups);
-  state.signupPage = normalizePage(response, signupFilterInput?.value || "");
+function applyUserPage(response) {
+  state.users = Array.isArray(response.items) ? response.items : [];
+  state.userStats = response.stats || buildFallbackUserStats(state.users);
+  state.userPage = normalizePage(response, userFilterInput?.value || "");
+  state.userPage.status = String(response.status || userStatusFilter?.value || "").trim();
 }
 
 function applyVehiclePage(response) {
@@ -198,18 +203,19 @@ function pageSummary(page, count) {
 }
 
 function renderDashboard() {
-  renderSignupMetrics();
-  renderStatList(countryStatsEl, state.signupStats?.by_country || []);
-  renderStatList(appStatsEl, state.signupStats?.by_app_interest || [], "app");
-  renderStatList(dayStatsEl, state.signupStats?.by_day || [], "day");
-  renderSignupRows();
+  renderUserMetrics();
+  renderStatList(countryStatsEl, state.userStats?.by_country || []);
+  renderStatList(appStatsEl, state.userStats?.by_app_interest || [], "app");
+  renderStatList(dayStatsEl, state.userStats?.by_day || [], "day");
+  renderUserRows();
   renderVehicleRows();
 }
 
-function buildFallbackSignupStats(items) {
+function buildFallbackUserStats(items) {
   return {
     total: items.length,
     updated_last_24h: items.filter((item) => Number(item.updated_at || 0) >= Date.now() / 1000 - 86400).length,
+    by_status: groupItems(items, "status"),
     by_vehicle_type: groupItems(items, "vehicle_type"),
     by_country: groupItems(items, "country"),
     by_app_interest: groupAppInterests(items),
@@ -238,14 +244,18 @@ function groupAppInterests(items) {
   return groupItems(expanded, "appInterest");
 }
 
-function renderSignupMetrics() {
+function renderUserMetrics() {
   if (!metricsEl) return;
-  const stats = state.signupStats || buildFallbackSignupStats(state.signups);
+  const stats = state.userStats || buildFallbackUserStats(state.users);
   const vehicleStats = new Map((stats.by_vehicle_type || []).map((entry) => [entry.value, entry.count]));
   const appStats = new Map((stats.by_app_interest || []).map((entry) => [entry.value, entry.count]));
+  const statusStats = new Map((stats.by_status || []).map((entry) => [entry.value, entry.count]));
   const accessStats = state.vehicleStats || Object.fromEntries(groupItems(state.vehicles, "access").map((entry) => [entry.value, entry.count]));
   renderMetrics([
-    ["Signups", stats.total ?? state.signups.length],
+    ["Users", stats.total ?? state.users.length],
+    ["Waitlist", statusStats.get("waitlist") || 0],
+    ["Invited", statusStats.get("invited") || 0],
+    ["Testers", statusStats.get("tester") || 0],
     ["Vehicles", state.vehicleStats?.total ?? state.vehiclePage.total ?? state.vehicles.length],
     ["Waze", appStats.get("waze") || 0],
     ["Android Auto", appStats.get("android_auto_no_carlinkit") || 0],
@@ -256,6 +266,7 @@ function renderSignupMetrics() {
     ["C10 REEV", vehicleStats.get("c10_reev") || 0],
     ["Expired", Number(accessStats.expired || 0)],
     ["Disabled", Number(accessStats.disabled || 0)],
+    ["Users Disabled", statusStats.get("disabled") || 0],
   ]);
 }
 
@@ -298,34 +309,44 @@ function renderStatList(container, entries, type = "value") {
     .join("");
 }
 
-function renderSignupRows() {
-  if (!signupRowsEl) return;
-  const items = state.signups;
+function renderUserRows() {
+  if (!userRowsEl) return;
+  const items = state.users;
 
   if (!items.length) {
-    signupRowsEl.innerHTML = `<tr><td colspan="9">${state.signupPage.query ? "No signups match this filter." : "No signups yet."}</td></tr>`;
-    renderPagination("signup");
+    userRowsEl.innerHTML = `<tr><td colspan="13">${state.userPage.query || state.userPage.status ? "No users match this filter." : "No users yet."}</td></tr>`;
+    renderPagination("user");
     return;
   }
 
-  signupRowsEl.innerHTML = items
+  userRowsEl.innerHTML = items
     .map(
       (item, index) => `
-        <tr class="clickable-row" tabindex="0" data-signup-index="${index}" title="Use this signup for an invite">
+        <tr>
           <td>${escapeHtml(item.email)}</td>
+          <td><span class="status-pill ${escapeHtml(item.status)}">${escapeHtml(formatUserStatus(item.status))}</span></td>
           <td>${escapeHtml(formatVehicle(item.vehicle_type))}</td>
           <td>${escapeHtml(item.country)}</td>
           <td>${escapeHtml(item.region || "-")}</td>
           <td>${escapeHtml(formatOwnershipDuration(item.ownership_duration))}</td>
           <td>${escapeHtml(formatAppInterests(item))}</td>
-          <td>${escapeHtml(formatSignupNotes(item))}</td>
+          <td>${escapeHtml(item.bound_vin_suffix ? `...${item.bound_vin_suffix}` : "-")}</td>
+          <td>${escapeHtml(formatInviteState(item))}</td>
+          <td>${escapeHtml(formatUserNotes(item))}</td>
           <td>${escapeHtml(item.source || "-")}</td>
           <td>${escapeHtml(formatDateTime(item.updated_at))}</td>
+          <td>
+            <div class="row-actions">
+              <button type="button" data-user-action="invite" data-user-index="${index}">Invite</button>
+              <button type="button" data-user-action="tester" data-user-index="${index}">Tester</button>
+              <button type="button" data-user-action="disable" data-user-index="${index}">Disable</button>
+            </div>
+          </td>
         </tr>
       `,
     )
     .join("");
-  renderPagination("signup");
+  renderPagination("user");
 }
 
 function renderVehicleRows() {
@@ -363,12 +384,12 @@ function renderVehicleRows() {
 }
 
 function renderPagination(kind) {
-  const isSignup = kind === "signup";
-  const page = isSignup ? state.signupPage : state.vehiclePage;
-  const count = isSignup ? state.signups.length : state.vehicles.length;
-  const label = isSignup ? signupPageLabel : vehiclePageLabel;
-  const prevButton = isSignup ? signupPrevButton : vehiclePrevButton;
-  const nextButton = isSignup ? signupNextButton : vehicleNextButton;
+  const isUser = kind === "user";
+  const page = isUser ? state.userPage : state.vehiclePage;
+  const count = isUser ? state.users.length : state.vehicles.length;
+  const label = isUser ? userPageLabel : vehiclePageLabel;
+  const prevButton = isUser ? userPrevButton : vehiclePrevButton;
+  const nextButton = isUser ? userNextButton : vehicleNextButton;
   if (label) label.textContent = pageSummary(page, count);
   if (prevButton) prevButton.disabled = page.offset <= 0;
   if (nextButton) nextButton.disabled = page.nextOffset === null;
@@ -395,7 +416,6 @@ async function createInvite(form) {
   const data = new FormData(form);
   const payload = {
     email: String(data.get("email") || "").trim(),
-    vin: normalizeVinInput(data.get("vin")),
     vehicle_type: String(data.get("vehicle_type") || "c10_bev"),
     country: String(data.get("country") || "").trim(),
     access: String(data.get("access") || "trial"),
@@ -406,7 +426,7 @@ async function createInvite(form) {
     send_email: Boolean(data.get("send_email")),
   };
   setAdminStatus("Creating invite...");
-  const result = await postJson("/v1/admin/invitations/create", payload);
+  const result = await postJson("/v1/admin/users/invite", payload);
   state.lastInvite = result;
   renderInvite(result);
   const delivery = result.email_delivery?.sent ? "Email sent." : "Email draft ready.";
@@ -426,29 +446,29 @@ function renderInvite(result) {
   if (!inviteOutput || !result?.email_template) return;
   inviteOutput.hidden = false;
   if (inviteCodeEl) {
-    inviteCodeEl.textContent = `Code: ${result.activation_code} · VIN ...${result.vehicle?.vin_suffix || ""}`;
+    const vin = result.vehicle?.vin_suffix ? ` · VIN ...${result.vehicle.vin_suffix}` : " · VIN binds on first Hub activation";
+    inviteCodeEl.textContent = `Code: ${result.activation_code}${vin}`;
   }
   if (inviteSubjectInput) inviteSubjectInput.value = result.email_template.subject || "";
   if (inviteMessageInput) inviteMessageInput.value = result.email_template.text || "";
   if (inviteMailtoLink) inviteMailtoLink.href = result.email_template.mailto || "#";
 }
 
-function prefillInviteFromSignup(signup) {
-  if (!inviteForm || !signup) return;
+function prefillInviteFromUser(user) {
+  if (!inviteForm || !user) return;
   switchTab("invite");
-  inviteForm.elements.email.value = signup.email || "";
-  inviteForm.elements.vehicle_type.value = signup.vehicle_type || "c10_bev";
-  inviteForm.elements.country.value = signup.country || "BR";
-  inviteForm.elements.locale.value = String(signup.locale || "").toLowerCase().startsWith("pt") ? "pt-BR" : "en";
+  inviteForm.elements.email.value = user.email || "";
+  inviteForm.elements.vehicle_type.value = user.vehicle_type || "c10_bev";
+  inviteForm.elements.country.value = user.country || "BR";
+  inviteForm.elements.locale.value = String(user.locale || "").toLowerCase().startsWith("pt") ? "pt-BR" : "en";
   inviteForm.elements.access.value = "trial";
   inviteForm.elements.trial_days.value = "7";
   inviteForm.elements.code_days.value = "14";
-  inviteForm.elements.vin.value = "";
-  inviteForm.elements.vin.focus();
+  inviteForm.elements.email.focus();
   if (accessForm) {
-    accessForm.elements.email.value = signup.email || "";
+    accessForm.elements.email.value = user.email || "";
   }
-  setAdminStatus("Invite filled from signup. Enter the VIN to create the vehicle-bound invite.", "success");
+  setAdminStatus("Invite filled from user. The VIN will bind when the code is redeemed in Hub.", "success");
 }
 
 async function runVehicleAction(action, vinHash) {
@@ -469,19 +489,39 @@ async function runVehicleAction(action, vinHash) {
   await refreshAll();
 }
 
+async function runUserAction(action, user) {
+  if (!user) return;
+  if (action === "invite") {
+    prefillInviteFromUser(user);
+    return;
+  }
+  const status = action === "tester" ? "tester" : action === "disable" ? "disabled" : "";
+  if (!status) return;
+  setAdminStatus("Updating user...");
+  const result = await postJson("/v1/admin/users/set-status", {
+    user_id: user.id,
+    status,
+  });
+  setAdminStatus(`${result.user?.email || user.email} is now ${formatUserStatus(result.user?.status || status)}.`, "success");
+  await refreshAll();
+}
+
 function exportCsv() {
-  if (!state.signups.length) {
-    setAdminStatus("No signup data to export.", "error");
+  if (!state.users.length) {
+    setAdminStatus("No user data to export.", "error");
     return;
   }
   const header = [
     "email",
+    "status",
     "vehicle_type",
     "country",
     "region",
     "ownership_duration",
     "app_interests",
     "other_app_interest",
+    "bound_vin_suffix",
+    "active_invite_expires_at",
     "notes",
     "locale",
     "source",
@@ -490,7 +530,7 @@ function exportCsv() {
   ];
   const csv = [
     header.join(","),
-    ...state.signups.map((item) =>
+    ...state.users.map((item) =>
       header
         .map((field) => {
           const value = field === "app_interests"
@@ -506,7 +546,7 @@ function exportCsv() {
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = `libremotor-beta-interest-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.download = `libremotor-users-${new Date().toISOString().slice(0, 10)}.csv`;
   link.click();
   URL.revokeObjectURL(link.href);
 }
@@ -524,9 +564,9 @@ function switchTab(tab) {
 function logout() {
   localStorage.removeItem(TOKEN_STORAGE_KEY);
   if (tokenInput) tokenInput.value = "";
-  state.signups = [];
+  state.users = [];
   state.vehicles = [];
-  state.signupStats = null;
+  state.userStats = null;
   state.vehicleStats = null;
   showLogin();
   setLoginStatus("Logged out.", "success");
@@ -567,7 +607,7 @@ function formatAppInterests(item) {
   return selected.length ? selected.join(", ") : "-";
 }
 
-function formatSignupNotes(item) {
+function formatUserNotes(item) {
   const value = String(item.notes || "").replace(/\s+/g, " ").trim();
   if (!value) return "-";
   return value.length > 120 ? `${value.slice(0, 117)}...` : value;
@@ -579,6 +619,21 @@ function formatAccess(value) {
   if (value === "expired") return "Expired";
   if (value === "disabled") return "Disabled";
   return value || "-";
+}
+
+function formatUserStatus(value) {
+  if (value === "waitlist") return "Waitlist";
+  if (value === "invited") return "Invited";
+  if (value === "tester") return "Tester";
+  if (value === "disabled") return "Disabled";
+  return value || "-";
+}
+
+function formatInviteState(item) {
+  if (item.bound_at) return `Bound ${formatDateTime(item.bound_at)}`;
+  if (item.active_invite_expires_at) return `Open until ${formatDateTime(item.active_invite_expires_at)}`;
+  if (item.last_invite_at) return `Last ${formatDateTime(item.last_invite_at)}`;
+  return "-";
 }
 
 function formatDateTime(value) {
@@ -624,21 +679,26 @@ document.querySelector("[data-refresh]")?.addEventListener("click", async () => 
 document.querySelector("[data-logout]")?.addEventListener("click", logout);
 document.querySelector("[data-forget-token]")?.addEventListener("click", logout);
 document.querySelector("[data-export-csv]")?.addEventListener("click", exportCsv);
-signupFilterInput?.addEventListener("input", debounce(() => loadSignupPage(0).catch((error) => {
-  setAdminStatus(error.message || "Could not load signups.", "error");
+userFilterInput?.addEventListener("input", debounce(() => loadUserPage(0).catch((error) => {
+  setAdminStatus(error.message || "Could not load users.", "error");
 }), 250));
+userStatusFilter?.addEventListener("change", () => {
+  loadUserPage(0).catch((error) => {
+    setAdminStatus(error.message || "Could not load users.", "error");
+  });
+});
 vehicleFilterInput?.addEventListener("input", debounce(() => loadVehiclePage(0).catch((error) => {
   setAdminStatus(error.message || "Could not load vehicles.", "error");
 }), 250));
-signupPrevButton?.addEventListener("click", () => {
-  loadSignupPage(Math.max(0, state.signupPage.offset - state.signupPage.limit)).catch((error) => {
-    setAdminStatus(error.message || "Could not load previous signups.", "error");
+userPrevButton?.addEventListener("click", () => {
+  loadUserPage(Math.max(0, state.userPage.offset - state.userPage.limit)).catch((error) => {
+    setAdminStatus(error.message || "Could not load previous users.", "error");
   });
 });
-signupNextButton?.addEventListener("click", () => {
-  if (state.signupPage.nextOffset === null) return;
-  loadSignupPage(state.signupPage.nextOffset).catch((error) => {
-    setAdminStatus(error.message || "Could not load next signups.", "error");
+userNextButton?.addEventListener("click", () => {
+  if (state.userPage.nextOffset === null) return;
+  loadUserPage(state.userPage.nextOffset).catch((error) => {
+    setAdminStatus(error.message || "Could not load next users.", "error");
   });
 });
 vehiclePrevButton?.addEventListener("click", () => {
@@ -685,18 +745,14 @@ vehicleRowsEl?.addEventListener("click", async (event) => {
   }
 });
 
-signupRowsEl?.addEventListener("click", (event) => {
-  const row = event.target.closest("[data-signup-index]");
-  if (!row) return;
-  prefillInviteFromSignup(state.signups[Number(row.dataset.signupIndex)]);
-});
-
-signupRowsEl?.addEventListener("keydown", (event) => {
-  if (event.key !== "Enter" && event.key !== " ") return;
-  const row = event.target.closest("[data-signup-index]");
-  if (!row) return;
-  event.preventDefault();
-  prefillInviteFromSignup(state.signups[Number(row.dataset.signupIndex)]);
+userRowsEl?.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-user-action]");
+  if (!button) return;
+  try {
+    await runUserAction(button.dataset.userAction, state.users[Number(button.dataset.userIndex)]);
+  } catch (error) {
+    setAdminStatus(error.message || "Could not update user.", "error");
+  }
 });
 
 document.querySelector("[data-copy-invite]")?.addEventListener("click", async () => {
