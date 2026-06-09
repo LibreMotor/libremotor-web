@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Libremotor Dashboard</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/dashboard.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Libremotor home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Libremotor</span>
+      </a>
+      <nav aria-label="Dashboard navigation">
+        <a href="/">Home</a>
+      </nav>
+    </header>
+
+    <main class="content document dashboard-page">
+      <section class="document-hero dashboard-hero">
+        <div>
+          <p class="eyebrow">Vehicle bridge</p>
+          <h1>Dashboard</h1>
+          <p class="document-lead" data-dashboard-lead>Scan a fresh QR code from Libremotor Hub to pair this dashboard.</p>
+        </div>
+        <div class="admin-actions">
+          <button class="button subtle" type="button" data-refresh-dashboard>Refresh</button>
+          <button class="button subtle" type="button" data-clear-dashboard>Disconnect</button>
+        </div>
+      </section>
+
+      <p class="form-status" role="status" data-dashboard-status></p>
+
+      <section class="dashboard-empty" data-dashboard-empty>
+        <span class="brand-mark large" aria-hidden="true"></span>
+        <h2>No vehicle paired</h2>
+        <p>Open Libremotor Hub in the car, go to Libremotor access, and generate a dashboard QR code.</p>
+      </section>
+
+      <section class="dashboard-shell" data-dashboard-shell hidden>
+        <section class="metrics-grid dashboard-metrics" data-dashboard-metrics></section>
+
+        <section class="admin-panels">
+          <article class="admin-panel">
+            <h2>Telemetry</h2>
+            <div class="dashboard-detail-grid" data-dashboard-telemetry></div>
+          </article>
+          <article class="admin-panel">
+            <h2>Cameras</h2>
+            <div class="dashboard-camera-list" data-dashboard-cameras></div>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      <span>Libremotor</span>
+      <a href="/terms/">Terms & Privacy</a>
+    </footer>
+  </body>
+</html>
