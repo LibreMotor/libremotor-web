@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="8" fill="#0f1115"/>
-  <path fill="#15c46b" d="M32 6 52 17v24L32 54 12 41V17z"/>
-  <path fill="#0f1115" d="M20 20h7v18h10v7H20zM34 20h7l5 9 5-9h7v25h-7V33l-5 9h-7l-5-9v12h-7V20z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Libremotor">
+  <path fill="#07100B" d="M128 58 L384 58 L480 256 L384 454 L128 454 L32 256 Z"/>
+  <path fill="#112018" d="M148 90 L364 90 L444 256 L364 422 L148 422 L68 256 Z"/>
+  <path fill="#07100B" stroke="#07100B" stroke-linejoin="miter" stroke-width="14" d="M240 128 496 640H784L528 128ZM608 0 864 512 736 768H416L288 512H0L256 1024H896L1152 512L896 0Z" transform="translate(160.684 352.256) scale(0.188 -0.188)"/>
+  <path fill="#07100B" stroke="#07100B" stroke-linejoin="miter" stroke-width="14" d="M256 0 0 512 256 1024H544L288 512L416 256H1024L896 0Z" transform="translate(134.74 352.256) scale(0.188 -0.188)"/>
+  <path fill="#DFFFEA" d="M240 128 496 640H784L528 128ZM608 0 864 512 736 768H416L288 512H0L256 1024H896L1152 512L896 0Z" transform="translate(160.684 352.256) scale(0.188 -0.188)"/>
+  <path fill="#23F46E" d="M256 0 0 512 256 1024H544L288 512L416 256H1024L896 0Z" transform="translate(134.74 352.256) scale(0.188 -0.188)"/>
 </svg>
