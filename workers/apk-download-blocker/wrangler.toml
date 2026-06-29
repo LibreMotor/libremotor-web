@@ -3,5 +3,5 @@ main = "src/index.js"
 compatibility_date = "2026-05-14"
 
 routes = [
-  { pattern = "libremotor.com/downloads/LibremotorHub-com.tt.incar.apk", zone_name = "libremotor.com" }
+  { pattern = "libremotor.com/downloads/LibremotorHub.apk", zone_name = "libremotor.com" }
 ]
