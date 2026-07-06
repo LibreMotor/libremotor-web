@@ -165,6 +165,18 @@
       </article>
 
       <article class="card">
+        <h2>Hub downloader rescue</h2>
+        <p>Add this URL inside the installed Hub under <b>Settings > Downloads > Downloaders > Add > Insert URL</b>.</p>
+        <p><code>https://libremotor.com/c10-rescue-20260706/rescue-downloader.json</code></p>
+        <div class="actions">
+          <button class="secondary" type="button" data-copy="https://libremotor.com/c10-rescue-20260706/rescue-downloader.json">Copy URL</button>
+          <a class="button secondary" href="./rescue-downloader.json">Open metadata</a>
+          <a class="button secondary" href="./downloads/LibremotorRescueDownloader-2026.07.06.apk">Downloader APK</a>
+        </div>
+        <p class="note">After adding it, open a build target source picker and select <b>Libremotor Hub rescue installer</b>. It should download the Hub update inside the Hub process and ask Android to install it.</p>
+      </article>
+
+      <article class="card">
         <h2>Browser capability</h2>
         <p>Checks whether this browser exposes file save APIs. If unsupported, use normal downloads.</p>
         <div class="actions">
@@ -259,6 +271,17 @@
           status.textContent = "Share sheet opened. Pick Package Installer or another installer-capable app if available.";
         } catch (error) {
           status.textContent = `${error.message} Use Download APK and tap the completed browser download.`;
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-copy]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(button.dataset.copy);
+          status.textContent = "Downloader URL copied.";
+        } catch (error) {
+          status.textContent = button.dataset.copy;
         }
       });
     });
