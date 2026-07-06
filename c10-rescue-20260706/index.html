@@ -177,6 +177,21 @@
       </article>
 
       <article class="card">
+        <h2>Separate App Manager</h2>
+        <p>Installs a second manager without replacing the current Hub. This uses a candidate package name that should not collide with the planned Waze or YouTube slots.</p>
+        <p><code>com.tencent.qqmusic</code><br><code>1700000002</code></p>
+        <p>Add this URL inside the installed Hub under <b>Settings > Downloads > Downloaders > Add > Insert URL</b>.</p>
+        <p><code>https://libremotor.com/c10-rescue-20260706/app-manager-downloader.json</code></p>
+        <div class="actions">
+          <button class="secondary" type="button" data-copy="https://libremotor.com/c10-rescue-20260706/app-manager-downloader.json">Copy URL</button>
+          <a class="button secondary" href="./app-manager-downloader.json">Open metadata</a>
+          <a class="button secondary" href="./downloads/LibremotorAppManagerDownloader-2026.07.06.apk">Downloader APK</a>
+          <a class="button secondary" href="./downloads/LibremotorAppManager-com.tencent.qqmusic-1700000002-signed.apk">App Manager APK</a>
+        </div>
+        <p class="note">After adding it, open a build target source picker and select <b>Libremotor App Manager installer</b>. It should download the separate App Manager APK and ask Android to install it.</p>
+      </article>
+
+      <article class="card">
         <h2>Browser capability</h2>
         <p>Checks whether this browser exposes file save APIs. If unsupported, use normal downloads.</p>
         <div class="actions">
@@ -195,6 +210,12 @@
 
   <script>
     const probes = [
+      "com_tencent_qqmusic--probe.apk",
+      "com_tencent_qqmusiccar--probe.apk",
+      "com_luna_music--probe.apk",
+      "com_migu_car_music--probe.apk",
+      "migu_car_music--probe.apk",
+      "com_miqu_car_music--probe.apk",
       "com_leapmotor_castscreen--probe.apk",
       "com_leapmotor_checkutils--probe.apk",
       "com_leapmotor_copilotshowapp--probe.apk",
