@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /c10-rescue-20260706/
 
 Sitemap: https://libremotor.com/sitemap.xml
