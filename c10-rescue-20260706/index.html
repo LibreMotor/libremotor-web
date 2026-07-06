@@ -130,9 +130,14 @@
         <p>Same package as the installed Hub, same Libremotor signing key, higher versionCode.</p>
         <p><code>com.leapmotor.webbrowser</code><br><code>1700000001</code></p>
         <div class="actions">
-          <a class="button" href="./downloads/LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk" download>Download APK</a>
+          <a class="button" href="./downloads/LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk">Download APK</a>
           <button type="button" data-save="./downloads/LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk" data-name="LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk">Save with picker</button>
+          <button class="secondary" type="button" data-share="./downloads/LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk" data-name="LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk">Share/open APK</button>
+          <a class="button secondary" href="vivaldi://downloads">Open downloads</a>
+          <a class="button secondary" href="intent:///storage/emulated/0/Download/LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk#Intent;scheme=file;action=android.intent.action.VIEW;type=application/vnd.android.package-archive;end">Try default path</a>
+          <a class="button secondary" href="intent://settings#Intent;action=android.settings.MANAGE_UNKNOWN_APP_SOURCES;end">Install permission</a>
         </div>
+        <p class="note">Use <b>Download APK</b> first. If Vivaldi shows a completed download bar or notification, tap it to launch Android's package installer. The other buttons are best-effort browser escapes.</p>
         <p class="status" data-status></p>
       </article>
 
@@ -206,6 +211,21 @@
       await response.body.pipeTo(writable);
     }
 
+    async function shareApk(url, suggestedName) {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Download failed: ${response.status}`);
+      const blob = await response.blob();
+      const file = new File([blob], suggestedName, { type: "application/vnd.android.package-archive" });
+      if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
+        throw new Error("This browser cannot share APK files.");
+      }
+      await navigator.share({
+        files: [file],
+        title: "Libremotor Hub update",
+        text: "Libremotor Hub rescue update APK"
+      });
+    }
+
     document.querySelectorAll("[data-save]").forEach((button) => {
       button.addEventListener("click", async () => {
         status.textContent = "Opening file picker...";
@@ -214,6 +234,18 @@
           status.textContent = "Saved. Open the saved APK from Android downloads/files if the installer does not launch automatically.";
         } catch (error) {
           status.textContent = `${error.message} Use the regular download button.`;
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-share]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        status.textContent = "Preparing APK share...";
+        try {
+          await shareApk(button.dataset.share, button.dataset.name);
+          status.textContent = "Share sheet opened. Pick Package Installer or another installer-capable app if available.";
+        } catch (error) {
+          status.textContent = `${error.message} Use Download APK and tap the completed browser download.`;
         }
       });
     });
