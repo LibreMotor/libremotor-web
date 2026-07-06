@@ -152,6 +152,19 @@
       </article>
 
       <article class="card">
+        <h2>Open Documents</h2>
+        <p>Use these after saving the APK with picker. If Documents opens, browse to the folder where you saved the APK and tap it.</p>
+        <div class="actions">
+          <a class="button secondary" href="intent://documents#Intent;action=android.intent.action.OPEN_DOCUMENT;category=android.intent.category.OPENABLE;type=application/vnd.android.package-archive;package=com.google.android.documentsui;end">Pick APK</a>
+          <a class="button secondary" href="intent://documents#Intent;action=android.intent.action.OPEN_DOCUMENT;category=android.intent.category.OPENABLE;type=*/*;package=com.google.android.documentsui;end">Pick any file</a>
+          <a class="button secondary" href="intent://documents#Intent;action=android.intent.action.VIEW;package=com.google.android.documentsui;end">Documents app</a>
+          <a class="button secondary" href="intent://documents#Intent;action=android.intent.action.VIEW;package=com.android.documentsui;end">AOSP Documents</a>
+          <a class="button secondary" href="intent://settings#Intent;action=android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION;end">Files permission</a>
+        </div>
+        <p class="note">The picker can open Documents, but the browser may only receive the chosen file instead of installing it. The useful case is when Documents opens as a file browser and lets you tap the APK there.</p>
+      </article>
+
+      <article class="card">
         <h2>Browser capability</h2>
         <p>Checks whether this browser exposes file save APIs. If unsupported, use normal downloads.</p>
         <div class="actions">
