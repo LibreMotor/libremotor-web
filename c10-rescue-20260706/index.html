@@ -155,6 +155,8 @@
         <h2>Open Documents</h2>
         <p>Use these after saving the APK with picker. If Documents opens, browse to the folder where you saved the APK and tap it.</p>
         <div class="actions">
+          <a class="button secondary" href="intent://files#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;component=com.android.documentsui/com.android.documentsui.files.FilesActivity;end">Open File Manager</a>
+          <a class="button secondary" href="intent://downloads#Intent;action=android.intent.action.VIEW_DOWNLOADS;component=com.android.documentsui/com.android.documentsui.files.FilesActivity;end">Open Downloads</a>
           <a class="button secondary" href="intent://documents#Intent;action=android.intent.action.OPEN_DOCUMENT;category=android.intent.category.OPENABLE;type=application/vnd.android.package-archive;package=com.google.android.documentsui;end">Pick APK</a>
           <a class="button secondary" href="intent://documents#Intent;action=android.intent.action.OPEN_DOCUMENT;category=android.intent.category.OPENABLE;type=*/*;package=com.google.android.documentsui;end">Pick any file</a>
           <a class="button secondary" href="intent://documents#Intent;action=android.intent.action.VIEW;package=com.google.android.documentsui;end">Documents app</a>
@@ -170,6 +172,8 @@
         <p><code>https://libremotor.com/c10-rescue-20260706/rescue-downloader.json</code></p>
         <div class="actions">
           <button class="secondary" type="button" data-copy="https://libremotor.com/c10-rescue-20260706/rescue-downloader.json">Copy URL</button>
+          <a class="button" href="libremotor-rescue://installer">Open Rescue Installer</a>
+          <a class="button secondary" href="intent://installer#Intent;scheme=libremotor-rescue;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.libremotor.rescueinstaller;end">Open via intent</a>
           <a class="button secondary" href="./rescue-downloader.json">Open metadata</a>
           <a class="button secondary" href="./downloads/LibremotorRescueInstaller-2026.07.07.apk">Installer APK</a>
         </div>
