@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>LeapOS Android Entry-Point Probe</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; color-scheme: dark light; }
+    body { margin: 0; padding: 22px; max-width: 1100px; }
+    h1 { font-size: 30px; margin: 0 0 10px; }
+    h2 { font-size: 24px; margin: 28px 0 10px; }
+    p, li, code, pre { font-size: 18px; line-height: 1.35; }
+    .note { padding: 14px; border: 1px solid currentColor; border-radius: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+    a.button, button, label.button {
+      display: block; box-sizing: border-box; width: 100%;
+      padding: 16px; border: 1px solid currentColor; border-radius: 12px;
+      text-decoration: none; background: transparent; color: inherit;
+      font: inherit; text-align: left; cursor: pointer;
+    }
+    a.button:active, button:active, label.button:active { transform: scale(.99); }
+    small { display: block; opacity: .75; margin-top: 5px; overflow-wrap: anywhere; }
+    input[type=file] { position: absolute; left: -10000px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px; border: 1px solid currentColor; border-radius: 10px; }
+    .danger { opacity: .8; }
+  </style>
+</head>
+<body>
+  <h1>LeapOS Android Entry-Point Probe</h1>
+
+  <p class="note">
+    Open this page from a real HTTPS URL in Vivaldi and tap the buttons directly.
+    Do not paste an <code>intent:</code> URL into the address bar: Chromium normally requires
+    a user-initiated click and a target activity marked <code>BROWSABLE</code>.
+    Run these tests only while the vehicle is parked.
+  </p>
+
+  <h2>Environment</h2>
+  <button type="button" id="probe">Show browser capabilities</button>
+  <pre id="log">Tap “Show browser capabilities”.</pre>
+
+  <h2>Android Settings — automatic resolution</h2>
+  <p>These do not force a package. Android may choose the available Settings implementation.</p>
+  <div class="grid" id="auto-actions"></div>
+
+  <h2>Android Settings — force <code>com.android.settings</code></h2>
+  <p>This is the regular AOSP Settings package. These are the highest-value tests when it exists alongside the automotive UI.</p>
+  <div class="grid" id="phone-actions"></div>
+
+  <h2>Car Settings — force <code>com.android.car.settings</code></h2>
+  <p class="danger">
+    AOSP Car Settings activities are usually exported but not marked BROWSABLE, so Chromium is likely to block these.
+    They are included because an OEM-modified Vivaldi or Settings manifest may behave differently.
+  </p>
+  <div class="grid" id="car-actions"></div>
+
+  <h2>DocumentsUI / Files probes</h2>
+  <p>
+    The standard file-input buttons should invoke DocumentsUI in OPEN/PICK mode and do not download anything.
+    The explicit launcher links are low-probability because stock Chromium requires BROWSABLE activities.
+  </p>
+  <div class="grid">
+    <label class="button">
+      Standard file picker — any file
+      <small>&lt;input type="file" accept="*/*"&gt;</small>
+      <input id="pick-any" type="file" accept="*/*">
+    </label>
+
+    <label class="button">
+      Standard file picker — APK
+      <small>&lt;input type="file" accept=".apk, application/vnd.android.package-archive"&gt;</small>
+      <input id="pick-apk" type="file" accept=".apk,application/vnd.android.package-archive">
+    </label>
+
+    <button type="button" id="open-fsa">
+      File System Access: showOpenFilePicker()
+      <small>Requires HTTPS, browser support, and a direct tap.</small>
+    </button>
+
+    <button type="button" id="open-dir">
+      File System Access: showDirectoryPicker()
+      <small>Useful to test whether USB/internal folders are exposed.</small>
+    </button>
+
+    <a class="button"
+       href="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;component=com.android.documentsui/.LauncherActivity;end">
+      DocumentsUI launcher alias
+      <small>com.android.documentsui/.LauncherActivity</small>
+    </a>
+
+    <a class="button"
+       href="intent:#Intent;action=android.intent.action.MAIN;component=com.android.documentsui/.files.FilesActivity;end">
+      DocumentsUI FilesActivity
+      <small>com.android.documentsui/.files.FilesActivity</small>
+    </a>
+
+    <a class="button"
+       href="intent:#Intent;action=android.intent.action.VIEW_DOWNLOADS;package=com.android.documentsui;end">
+      DocumentsUI VIEW_DOWNLOADS
+      <small>android.intent.action.VIEW_DOWNLOADS</small>
+    </a>
+  </div>
+
+  <h2>Result notes</h2>
+  <ul>
+    <li>If any Settings page opens, first try its search icon, then Back/Up to reach the Settings home.</li>
+    <li>If only the file picker opens, note whether USB appears in its side drawer and whether long-press/overflow exposes another Files view.</li>
+    <li>If every intent reports that the link cannot be opened, the browser is probably enforcing BROWSABLE and LeapOS has removed the remaining browser-reachable Settings entry points.</li>
+  </ul>
+
+<script>
+const actions = [
+  ["Bluetooth settings", "android.settings.BLUETOOTH_SETTINGS"],
+  ["Wi-Fi settings", "android.settings.WIFI_SETTINGS"],
+  ["VPN settings", "android.settings.VPN_SETTINGS"],
+  ["Date & time", "android.settings.DATE_SETTINGS"],
+  ["Language / locale", "android.settings.LOCALE_SETTINGS"],
+  ["Input methods", "android.settings.INPUT_METHOD_SETTINGS"],
+  ["Voice input", "android.settings.VOICE_INPUT_SETTINGS"],
+  ["Location", "android.settings.LOCATION_SOURCE_SETTINGS"],
+  ["Privacy", "android.settings.PRIVACY_SETTINGS"],
+  ["Accessibility", "android.settings.ACCESSIBILITY_SETTINGS"],
+  ["Captioning", "android.settings.CAPTIONING_SETTINGS"],
+  ["Data usage", "android.settings.DATA_USAGE_SETTINGS"],
+  ["Battery optimization app list", "android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS"],
+  ["Screensaver", "android.settings.DREAM_SETTINGS"],
+  ["Main Settings — lower probability", "android.settings.SETTINGS"],
+  ["Applications — lower probability", "android.settings.APPLICATION_SETTINGS"],
+  ["Internal storage — lower probability", "android.settings.INTERNAL_STORAGE_SETTINGS"]
+];
+
+function intentHref(action, packageName) {
+  let parts = [
+    "intent:#Intent",
+    "action=" + action,
+    "category=android.intent.category.BROWSABLE"
+  ];
+  if (packageName) parts.push("package=" + packageName);
+  parts.push("end");
+  return parts.join(";");
+}
+
+function fill(containerId, packageName) {
+  const root = document.getElementById(containerId);
+  for (const [label, action] of actions) {
+    const a = document.createElement("a");
+    a.className = "button";
+    a.href = intentHref(action, packageName);
+    a.textContent = label;
+    const small = document.createElement("small");
+    small.textContent = action + (packageName ? " → " + packageName : "");
+    a.appendChild(small);
+    root.appendChild(a);
+  }
+}
+
+fill("auto-actions", "");
+fill("phone-actions", "com.android.settings");
+fill("car-actions", "com.android.car.settings");
+
+const log = document.getElementById("log");
+function write(message) {
+  log.textContent += "\n" + message;
+}
+
+document.getElementById("probe").addEventListener("click", () => {
+  log.textContent = [
+    "isSecureContext: " + window.isSecureContext,
+    "showOpenFilePicker: " + ("showOpenFilePicker" in window),
+    "showDirectoryPicker: " + ("showDirectoryPicker" in window),
+    "showSaveFilePicker: " + ("showSaveFilePicker" in window),
+    "navigator.share: " + ("share" in navigator),
+    "userAgent: " + navigator.userAgent
+  ].join("\n");
+});
+
+document.getElementById("pick-any").addEventListener("change", (event) => {
+  const f = event.target.files && event.target.files[0];
+  write(f ? `Picked: ${f.name} (${f.type || "unknown MIME"}, ${f.size} bytes)` : "No file selected.");
+});
+
+document.getElementById("pick-apk").addEventListener("change", (event) => {
+  const f = event.target.files && event.target.files[0];
+  write(f ? `Picked APK candidate: ${f.name} (${f.type || "unknown MIME"}, ${f.size} bytes)` : "No APK selected.");
+});
+
+document.getElementById("open-fsa").addEventListener("click", async () => {
+  try {
+    if (!window.showOpenFilePicker) throw new Error("showOpenFilePicker is unavailable.");
+    const [handle] = await window.showOpenFilePicker({
+      multiple: false,
+      types: [{
+        description: "APK or any file",
+        accept: {
+          "application/vnd.android.package-archive": [".apk"],
+          "application/octet-stream": [".apk", ".bin", ".zip"],
+          "*/*": []
+        }
+      }]
+    });
+    const f = await handle.getFile();
+    write(`FSA file: ${f.name} (${f.type || "unknown MIME"}, ${f.size} bytes)`);
+  } catch (e) {
+    write(`showOpenFilePicker: ${e.name || "Error"} — ${e.message || e}`);
+  }
+});
+
+document.getElementById("open-dir").addEventListener("click", async () => {
+  try {
+    if (!window.showDirectoryPicker) throw new Error("showDirectoryPicker is unavailable.");
+    const dir = await window.showDirectoryPicker({mode: "read"});
+    write(`Directory selected: ${dir.name}`);
+    let count = 0;
+    for await (const [name, handle] of dir.entries()) {
+      write(`${handle.kind}: ${name}`);
+      if (++count >= 50) {
+        write("Stopped after 50 entries.");
+        break;
+      }
+    }
+  } catch (e) {
+    write(`showDirectoryPicker: ${e.name || "Error"} — ${e.message || e}`);
+  }
+});
+</script>
+</body>
+</html>
