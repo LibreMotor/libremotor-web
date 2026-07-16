@@ -2,217 +2,560 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>Libremotor C10 Rescue</title>
+  <meta name="theme-color" content="#06110a">
+  <title>Libremotor C10 Rescue Installer</title>
   <link rel="icon" href="/favicon.svg">
   <style>
     :root {
       color-scheme: dark;
-      --bg: #030704;
-      --panel: #09120d;
-      --panel2: #0d1912;
+      --bg: #020503;
+      --panel: rgba(8, 18, 12, .94);
+      --panel-2: #0d1b13;
+      --panel-3: #12241a;
       --line: rgba(141, 255, 178, .22);
+      --line-strong: rgba(141, 255, 178, .45);
       --text: #f3fff5;
       --muted: #a9b8ac;
       --accent: #23f46e;
-      --accent2: #00c958;
+      --accent-2: #00c958;
+      --warning: #ffd166;
+      --danger: #ff8f8f;
+      --success: #8dffb2;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
+
     * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
     body {
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at 80% 12%, rgba(35, 244, 110, .14), transparent 30%),
+        radial-gradient(circle at 80% 8%, rgba(35, 244, 110, .15), transparent 31%),
+        radial-gradient(circle at 10% 35%, rgba(35, 244, 110, .07), transparent 28%),
         linear-gradient(180deg, #06110a, var(--bg) 62%, #010302);
       color: var(--text);
     }
+
+    button, input { font: inherit; }
+
     main {
-      width: min(980px, calc(100% - 28px));
+      width: min(1050px, calc(100% - 28px));
       margin: 0 auto;
-      padding: 32px 0 48px;
+      padding: 30px 0 58px;
     }
+
     header {
       display: grid;
       gap: 10px;
       margin-bottom: 20px;
     }
-    h1, h2, p { margin: 0; }
-    h1 { color: var(--accent); font-size: clamp(30px, 5vw, 52px); line-height: 1; }
-    h2 { font-size: 20px; }
-    p, li { color: var(--muted); line-height: 1.55; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 14px;
-      align-items: start;
-    }
-    .card {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: rgba(9, 18, 13, .88);
-      padding: 18px;
-      display: grid;
-      gap: 14px;
-    }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    a.button, button {
-      min-height: 42px;
-      border: 0;
-      border-radius: 999px;
-      padding: 0 16px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      color: #031006;
-      background: linear-gradient(135deg, var(--accent), #dfffea);
-      font: inherit;
-      font-weight: 850;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    a.secondary, button.secondary {
-      color: var(--text);
-      background: var(--panel2);
-      border: 1px solid var(--line);
-    }
-    .status {
-      min-height: 24px;
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
       color: var(--accent);
-      font-weight: 750;
-      overflow-wrap: anywhere;
+      font-size: clamp(32px, 5vw, 54px);
+      line-height: 1;
+      letter-spacing: -.03em;
     }
-    .probe-list {
-      display: grid;
-      gap: 8px;
-      max-height: 360px;
-      overflow: auto;
-      padding-right: 4px;
+
+    h2 { font-size: clamp(22px, 3vw, 29px); }
+    h3 { font-size: 18px; }
+
+    p, li {
+      color: var(--muted);
+      line-height: 1.55;
     }
-    .probe-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 10px;
-      align-items: center;
-      border: 1px solid rgba(255, 255, 255, .08);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, .035);
-      padding: 10px;
-    }
+
     code {
       color: #dfffea;
       overflow-wrap: anywhere;
     }
+
     small { color: var(--muted); }
-    .note {
-      border-left: 3px solid var(--accent);
-      padding-left: 12px;
+
+    .eyebrow {
+      color: var(--accent);
+      font-weight: 850;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      padding: 20px;
+      display: grid;
+      gap: 15px;
+      box-shadow: 0 18px 60px rgba(0, 0, 0, .22);
+    }
+
+    .hero-note {
+      border-left: 4px solid var(--accent);
+      padding: 13px 15px;
+      border-radius: 0 10px 10px 0;
+      background: rgba(35, 244, 110, .06);
+    }
+
+    .support-banner {
+      display: none;
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      background: rgba(255, 80, 80, .08);
+      border-radius: 12px;
+      padding: 14px;
+      line-height: 1.45;
+    }
+
+    .support-banner.visible { display: block; }
+
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .step {
+      position: relative;
+      min-height: 235px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(160deg, rgba(16, 35, 24, .97), rgba(7, 15, 10, .97));
+      padding: 20px;
+      display: grid;
+      align-content: start;
+      gap: 13px;
+      overflow: hidden;
+    }
+
+    .step::after {
+      content: attr(data-step);
+      position: absolute;
+      right: 12px;
+      top: 0;
+      color: rgba(141, 255, 178, .08);
+      font-weight: 950;
+      font-size: 100px;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .step-number {
+      width: 36px;
+      height: 36px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #031006;
+      background: var(--accent);
+      font-weight: 950;
+      z-index: 1;
+    }
+
+    .button, button.button {
+      min-height: 50px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 19px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      color: #031006;
+      background: linear-gradient(135deg, var(--accent), #dfffea);
+      font-weight: 900;
+      text-decoration: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button.button:disabled {
+      cursor: wait;
+      opacity: .62;
+    }
+
+    .button.secondary, button.button.secondary {
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+    }
+
+    .button.compact, button.button.compact {
+      min-height: 40px;
+      padding: 0 14px;
+      font-size: 14px;
+    }
+
+    .button.install-ready {
+      animation: readyPulse 1.4s ease-in-out 2;
+    }
+
+    @keyframes readyPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(35, 244, 110, 0); }
+      50% { box-shadow: 0 0 0 9px rgba(35, 244, 110, .15); }
+    }
+
+    .status {
+      min-height: 25px;
+      color: var(--success);
+      font-weight: 750;
+      overflow-wrap: anywhere;
+      line-height: 1.4;
+    }
+
+    .status.error { color: var(--danger); }
+    .status.warning { color: var(--warning); }
+
+    .progress {
+      display: none;
+      width: 100%;
+      height: 9px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .08);
+    }
+
+    .progress.visible { display: block; }
+
+    .progress > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent));
+      transition: width .15s linear;
+    }
+
+    .install-tip {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      padding: 13px;
+      background: rgba(35, 244, 110, .055);
+    }
+
+    .expand-icon {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--accent);
+      background: var(--panel-3);
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .confirmation-list {
+      margin: 0;
+      padding-left: 22px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .section-stack {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    details.card { padding: 0; }
+
+    details.card > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 19px 20px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    details.card > summary::-webkit-details-marker { display: none; }
+    details.card > summary::after { content: "+"; color: var(--accent); font-size: 27px; }
+    details.card[open] > summary::after { content: "−"; }
+
+    .details-body {
+      border-top: 1px solid var(--line);
+      padding: 18px 20px 20px;
+      display: grid;
+      gap: 15px;
+    }
+
+    .package-list, .probe-list, .file-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .package-row, .probe-row, .file-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid rgba(255, 255, 255, .085);
+      border-radius: 11px;
+      background: rgba(255, 255, 255, .034);
+      padding: 12px;
+    }
+
+    .package-meta {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .package-meta strong, .file-name {
+      overflow-wrap: anywhere;
+    }
+
+    .row-status {
+      grid-column: 1 / -1;
+      min-height: 0;
+      color: var(--success);
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .row-status:empty { display: none; }
+    .row-status.error { color: var(--danger); }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search {
+      flex: 1 1 240px;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 0 16px;
+      outline: none;
+    }
+
+    .search:focus { border-color: var(--accent); }
+
+    .folder-path {
+      color: var(--accent);
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .file-row.folder { cursor: pointer; }
+    .file-row.folder:hover { border-color: var(--line-strong); }
+
+    .file-kind {
+      min-width: 34px;
+      color: var(--accent);
+      font-weight: 900;
+    }
+
+    .file-main {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .muted { color: var(--muted); }
+    .warning { color: var(--warning); }
+
+    .footer-note {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 760px) {
+      main { width: min(100% - 18px, 1050px); padding-top: 18px; }
+      .step-grid { grid-template-columns: 1fr; }
+      .step { min-height: 0; }
+      .package-row, .probe-row, .file-row { grid-template-columns: 1fr; }
+      .package-row .button, .probe-row .button, .file-row .button { width: 100%; }
+      .row-status { grid-column: 1; }
     }
   </style>
 </head>
 <body>
   <main>
     <header>
-      <small>Hidden rescue surface</small>
-      <h1>C10 Rescue</h1>
-      <p>Use this page from the car browser when File Manager is blocked. Downloads still require Android to allow package installation.</p>
+      <span class="eyebrow">LeapOS 3.50.58 rescue path</span>
+      <h1>Libremotor C10 Installer</h1>
+      <p>This page uses Android's file pickers instead of Vivaldi's blocked download manager.</p>
     </header>
 
-    <section class="grid">
-      <article class="card">
-        <h2>Hub update</h2>
-        <p>Same package as the installed Hub, same Libremotor signing key, higher versionCode.</p>
-        <p><code>com.leapmotor.webbrowser</code><br><code>1700000001</code></p>
-        <div class="actions">
-          <a class="button" href="./downloads/LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk">Download APK</a>
-          <button type="button" data-save="./downloads/LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk" data-name="LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk">Save with picker</button>
-          <button class="secondary" type="button" data-share="./downloads/LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk" data-name="LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk">Share/open APK</button>
-          <a class="button secondary" href="vivaldi://downloads">Open downloads</a>
-          <a class="button secondary" href="intent:///storage/emulated/0/Download/LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk#Intent;scheme=file;action=android.intent.action.VIEW;type=application/vnd.android.package-archive;end">Try default path</a>
-          <a class="button secondary" href="intent://settings#Intent;action=android.settings.MANAGE_UNKNOWN_APP_SOURCES;end">Install permission</a>
-        </div>
-        <p class="note">Use <b>Download APK</b> first. If Vivaldi shows a completed download bar or notification, tap it to launch Android's package installer. The other buttons are best-effort browser escapes.</p>
-        <p class="status" data-status></p>
-      </article>
+    <div id="support-banner" class="support-banner" role="alert"></div>
 
-      <article class="card">
-        <h2>Open system stores</h2>
-        <p>These links test which package owns the AppStore/App Center surface on the updated car.</p>
-        <div class="actions">
-          <a class="button secondary" href="intent://open#Intent;package=com.faa.leapmoto.appstore;end">Open AppStore</a>
-          <a class="button secondary" href="intent://open#Intent;package=com.leapmotor.appcenter;end">Open App Center</a>
-        </div>
-        <p class="note">Local evidence says the launcher icon named AppStore is probably <code>com.faa.leapmoto.appstore</code>. The install-cache tutorial path uses <code>com.leapmotor.appcenter</code>.</p>
-      </article>
+    <section class="card" aria-labelledby="hub-title">
+      <div>
+        <span class="eyebrow">Recommended update</span>
+        <h2 id="hub-title">Update Libremotor Hub</h2>
+      </div>
 
-      <article class="card">
-        <h2>Open Documents</h2>
-        <p>Use these after saving the APK with picker. If Documents opens, browse to the folder where you saved the APK and tap it.</p>
-        <div class="actions">
-          <a class="button secondary" href="intent://files#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;component=com.android.documentsui/com.android.documentsui.files.FilesActivity;end">Open File Manager</a>
-          <a class="button secondary" href="intent://downloads#Intent;action=android.intent.action.VIEW_DOWNLOADS;component=com.android.documentsui/com.android.documentsui.files.FilesActivity;end">Open Downloads</a>
-          <a class="button secondary" href="intent://documents#Intent;action=android.intent.action.OPEN_DOCUMENT;category=android.intent.category.OPENABLE;type=application/vnd.android.package-archive;package=com.google.android.documentsui;end">Pick APK</a>
-          <a class="button secondary" href="intent://documents#Intent;action=android.intent.action.OPEN_DOCUMENT;category=android.intent.category.OPENABLE;type=*/*;package=com.google.android.documentsui;end">Pick any file</a>
-          <a class="button secondary" href="intent://documents#Intent;action=android.intent.action.VIEW;package=com.google.android.documentsui;end">Documents app</a>
-          <a class="button secondary" href="intent://documents#Intent;action=android.intent.action.VIEW;package=com.android.documentsui;end">AOSP Documents</a>
-          <a class="button secondary" href="intent://settings#Intent;action=android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION;end">Files permission</a>
-        </div>
-        <p class="note">The picker can open Documents, but the browser may only receive the chosen file instead of installing it. The useful case is when Documents opens as a file browser and lets you tap the APK there.</p>
-      </article>
+      <p>
+        Package <code>com.leapmotor.webbrowser</code> · versionCode <code>1700000001</code> ·
+        signed with the existing Libremotor key.
+      </p>
 
-      <article class="card">
-        <h2>Rescue installer</h2>
-        <p>Add this URL inside the installed Hub under <b>Settings > Downloads > Downloaders > Add > Insert URL</b>. It installs a launcher app, so you do not need File Manager.</p>
-        <p><code>https://libremotor.com/c10-rescue-20260706/rescue-downloader.json</code></p>
-        <div class="actions">
-          <button class="secondary" type="button" data-copy="https://libremotor.com/c10-rescue-20260706/rescue-downloader.json">Copy URL</button>
-          <a class="button" href="libremotor-rescue://installer">Open Rescue Installer</a>
-          <a class="button secondary" href="intent://installer#Intent;scheme=libremotor-rescue;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.libremotor.rescueinstaller;end">Open via intent</a>
-          <a class="button secondary" href="./rescue-downloader.json">Open metadata</a>
-          <a class="button secondary" href="./downloads/LibremotorRescueInstaller-2026.07.07.apk">Installer APK</a>
-        </div>
-        <p class="note">After adding it, open the car app launcher and start <b>Libremotor Rescue Installer</b>. Use its buttons to update the Hub or install App Manager.</p>
-      </article>
+      <div class="step-grid">
+        <article class="step" data-step="1">
+          <span class="step-number">1</span>
+          <h3>Save the APK</h3>
+          <p>Tap <b>Download</b>, choose a simple folder, keep the suggested filename, and tap <b>Save</b>.</p>
+          <button
+            id="hub-download"
+            class="button"
+            type="button"
+            data-download="./downloads/LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk"
+            data-name="LibremotorHub-com.leapmotor.webbrowser-1700000001-rescue-signed.apk"
+            data-status-target="hub-download-status">
+            Download
+          </button>
+          <div class="progress" id="hub-progress" aria-hidden="true"><span></span></div>
+          <p class="status" id="hub-download-status" aria-live="polite"></p>
+        </article>
 
-      <article class="card">
-        <h2>Separate App Manager</h2>
-        <p>Installs a second manager without replacing the current Hub. This uses a candidate package name that should not collide with the planned Waze or YouTube slots.</p>
-        <p><code>com.tencent.qqmusic</code><br><code>1700000002</code></p>
-        <p>Add this URL inside the installed Hub under <b>Settings > Downloads > Downloaders > Add > Insert URL</b>.</p>
-        <p><code>https://libremotor.com/c10-rescue-20260706/app-manager-downloader.json</code></p>
-        <div class="actions">
-          <button class="secondary" type="button" data-copy="https://libremotor.com/c10-rescue-20260706/app-manager-downloader.json">Copy URL</button>
-          <a class="button secondary" href="./app-manager-downloader.json">Open metadata</a>
-          <a class="button secondary" href="./downloads/LibremotorAppManagerDownloader-2026.07.06.apk">Downloader APK</a>
-          <a class="button secondary" href="./downloads/LibremotorAppManager-com.tencent.qqmusic-1700000002-signed.apk">App Manager APK</a>
-        </div>
-        <p class="note">After adding it, open a build target source picker and select <b>Libremotor App Manager installer</b>. It should download the separate App Manager APK and ask Android to install it.</p>
-      </article>
+        <article class="step" data-step="2" id="install-step">
+          <span class="step-number">2</span>
+          <h3>Open the Android installer</h3>
+          <p>Tap <b>Install saved APK</b>. In the picker, navigate to the saved APK—but do not select it normally.</p>
+          <button id="install-apk" class="button" type="button">Install saved APK</button>
+          <p class="status" id="install-status" aria-live="polite"></p>
+        </article>
+      </div>
 
-      <article class="card">
-        <h2>Browser capability</h2>
-        <p>Checks whether this browser exposes file save APIs. If unsupported, use normal downloads.</p>
-        <div class="actions">
-          <button class="secondary" type="button" data-check>Check file APIs</button>
-        </div>
-        <p class="status" data-capability></p>
-      </article>
+      <div class="install-tip">
+        <div class="expand-icon" aria-hidden="true">⛶</div>
+        <p>
+          <b>Critical step:</b> inside DocumentsUI, tap the <b>Expand / open-in-Files icon</b>.
+          When the full Files view appears, tap the APK there. Android should then open Package Installer.
+        </p>
+      </div>
+
+      <div class="hero-note">
+        <p><b>Finish:</b> confirm <b>Update</b> in Android Package Installer. Keep the vehicle parked until installation completes.</p>
+      </div>
     </section>
 
-    <section class="card" style="margin-top: 14px;">
-      <h2>Package probes</h2>
-      <p>Small APKs for testing whitelisted package names visible in App Manager. Use these only to observe install success/failure.</p>
-      <div class="probe-list" id="probe-list"></div>
+    <section class="section-stack">
+      <details class="card">
+        <summary>Install another Libremotor APK</summary>
+        <div class="details-body">
+          <p>Every <b>Download</b> button below uses <code>showSaveFilePicker()</code>. After saving, use the main <b>Install saved APK</b> button above.</p>
+          <div class="package-list" id="other-packages"></div>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary>Package probes</summary>
+        <div class="details-body">
+          <p>Each probe button also uses the proven Save Picker route. The visible label remains <b>Download</b>.</p>
+          <div class="toolbar">
+            <input id="probe-search" class="search" type="search" placeholder="Filter package names" autocomplete="off">
+          </div>
+          <div class="probe-list" id="probe-list"></div>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary>Folder browser and diagnostics</summary>
+        <div class="details-body">
+          <p>
+            This read-only web file manager can enumerate a directory selected through DocumentsUI.
+            Selecting a folder also makes it the preferred starting point for the installer picker.
+          </p>
+
+          <div class="toolbar">
+            <button id="choose-directory" class="button secondary" type="button">Choose directory</button>
+            <button id="directory-back" class="button secondary compact" type="button" disabled>Back</button>
+            <button id="check-capabilities" class="button secondary compact" type="button">Check APIs</button>
+          </div>
+
+          <p class="folder-path" id="folder-path">No directory selected.</p>
+          <p class="status" id="directory-status" aria-live="polite"></p>
+          <div class="file-list" id="file-list"></div>
+
+          <div class="hero-note">
+            <p>
+              A web page can read or write files after permission is granted, but it does not receive a normal Android
+              <code>content://</code> URI that it can directly hand to Package Installer. The working bridge remains:
+              <b>showOpenFilePicker → Expand icon → full Files view → tap APK</b>.
+            </p>
+          </div>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary>Alternative downloader metadata</summary>
+        <div class="details-body">
+          <div class="package-row">
+            <div class="package-meta">
+              <strong>Rescue Installer metadata</strong>
+              <code>https://libremotor.com/c10-rescue-20260706/rescue-downloader.json</code>
+            </div>
+            <button class="button secondary compact" type="button" data-copy="https://libremotor.com/c10-rescue-20260706/rescue-downloader.json">Copy URL</button>
+            <p class="row-status"></p>
+          </div>
+
+          <div class="package-row">
+            <div class="package-meta">
+              <strong>App Manager metadata</strong>
+              <code>https://libremotor.com/c10-rescue-20260706/app-manager-downloader.json</code>
+            </div>
+            <button class="button secondary compact" type="button" data-copy="https://libremotor.com/c10-rescue-20260706/app-manager-downloader.json">Copy URL</button>
+            <p class="row-status"></p>
+          </div>
+        </div>
+      </details>
     </section>
+
+    <p class="footer-note">Libremotor C10 Rescue · proven picker-based installation flow · build 2026-07-16</p>
   </main>
 
   <script>
+    "use strict";
+
+    const PICKER_ID = "libremotor-c10-apk-location";
+    const APK_MIME = "application/vnd.android.package-archive";
+
+    const otherPackages = [
+      {
+        title: "Libremotor Rescue Installer",
+        packageName: "com.libremotor.rescueinstaller",
+        filename: "LibremotorRescueInstaller-2026.07.07.apk",
+        url: "./downloads/LibremotorRescueInstaller-2026.07.07.apk"
+      },
+      {
+        title: "Libremotor App Manager Downloader",
+        packageName: "installer helper",
+        filename: "LibremotorAppManagerDownloader-2026.07.06.apk",
+        url: "./downloads/LibremotorAppManagerDownloader-2026.07.06.apk"
+      },
+      {
+        title: "Libremotor App Manager",
+        packageName: "com.tencent.qqmusic",
+        filename: "LibremotorAppManager-com.tencent.qqmusic-1700000002-signed.apk",
+        url: "./downloads/LibremotorAppManager-com.tencent.qqmusic-1700000002-signed.apk"
+      }
+    ];
+
     const probes = [
       "com_tencent_qqmusic--probe.apk",
       "com_tencent_qqmusiccar--probe.apk",
@@ -234,97 +577,464 @@
       "com_leapmotor_iqiyi--probe.apk"
     ];
 
-    const capability = document.querySelector("[data-capability]");
-    const status = document.querySelector("[data-status]");
+    let lastSavedHandle = null;
+    let preferredDirectoryHandle = null;
+    let directoryStack = [];
 
-    document.querySelector("[data-check]").addEventListener("click", () => {
-      const parts = [
-        `showSaveFilePicker: ${"showSaveFilePicker" in window ? "yes" : "no"}`,
-        `showOpenFilePicker: ${"showOpenFilePicker" in window ? "yes" : "no"}`,
-        `showDirectoryPicker: ${"showDirectoryPicker" in window ? "yes" : "no"}`,
-        `mediaDevices: ${navigator.mediaDevices ? "yes" : "no"}`
-      ];
-      capability.textContent = parts.join(" | ");
-    });
+    const supportBanner = document.getElementById("support-banner");
+    const installButton = document.getElementById("install-apk");
+    const installStatus = document.getElementById("install-status");
 
-    async function saveWithPicker(url, suggestedName) {
-      if (!("showSaveFilePicker" in window)) {
-        throw new Error("This browser does not expose showSaveFilePicker.");
+    function setStatus(element, message, type) {
+      if (!element) return;
+      element.textContent = message || "";
+      element.classList.remove("error", "warning");
+      if (type) element.classList.add(type);
+    }
+
+    function formatBytes(bytes) {
+      if (!Number.isFinite(bytes) || bytes < 0) return "";
+      if (bytes < 1024) return `${bytes} B`;
+      const units = ["KB", "MB", "GB", "TB"];
+      let value = bytes / 1024;
+      let unit = units[0];
+      for (let i = 1; i < units.length && value >= 1024; i += 1) {
+        value /= 1024;
+        unit = units[i];
       }
-      const handle = await window.showSaveFilePicker({
-        suggestedName,
-        types: [{ description: "Android package", accept: { "application/vnd.android.package-archive": [".apk"] } }]
-      });
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`Download failed: ${response.status}`);
+      return `${value >= 10 ? value.toFixed(1) : value.toFixed(2)} ${unit}`;
+    }
+
+    function apkPickerTypes() {
+      return [{
+        description: "Android package",
+        accept: {
+          [APK_MIME]: [".apk"],
+          "application/octet-stream": [".apk"]
+        }
+      }];
+    }
+
+    function pickerStartHandle() {
+      return preferredDirectoryHandle || lastSavedHandle || "downloads";
+    }
+
+    async function showSavePicker(options) {
+      try {
+        return await window.showSaveFilePicker(options);
+      } catch (error) {
+        // Some older Chromium builds reject startIn or id. Retry with the minimal supported options.
+        if (error && error.name === "TypeError") {
+          const fallback = {
+            suggestedName: options.suggestedName,
+            excludeAcceptAllOption: false
+          };
+          return window.showSaveFilePicker(fallback);
+        }
+        throw error;
+      }
+    }
+
+    async function showOpenPicker(options) {
+      try {
+        return await window.showOpenFilePicker(options);
+      } catch (error) {
+        // Preserve the working basic picker on older automotive Chromium builds.
+        if (error && error.name === "TypeError") {
+          return window.showOpenFilePicker({ multiple: false });
+        }
+        throw error;
+      }
+    }
+
+    async function writeResponseToHandle(response, handle, progressElement, onProgress) {
       const writable = await handle.createWritable();
-      await response.body.pipeTo(writable);
-    }
+      const total = Number(response.headers.get("content-length")) || 0;
+      let received = 0;
 
-    async function shareApk(url, suggestedName) {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`Download failed: ${response.status}`);
-      const blob = await response.blob();
-      const file = new File([blob], suggestedName, { type: "application/vnd.android.package-archive" });
-      if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
-        throw new Error("This browser cannot share APK files.");
+      try {
+        if (!response.body || !response.body.getReader) {
+          const blob = await response.blob();
+          await writable.write(blob);
+          await writable.close();
+          if (onProgress) onProgress(blob.size, blob.size || total);
+          return blob.size;
+        }
+
+        const reader = response.body.getReader();
+        while (true) {
+          const chunk = await reader.read();
+          if (chunk.done) break;
+          await writable.write(chunk.value);
+          received += chunk.value.byteLength;
+          if (onProgress) onProgress(received, total);
+        }
+        await writable.close();
+        return received;
+      } catch (error) {
+        try {
+          if (typeof writable.abort === "function") await writable.abort(error);
+        } catch (_) {
+          // Ignore cleanup failures and preserve the original error.
+        }
+        throw error;
+      } finally {
+        if (progressElement) progressElement.setAttribute("aria-hidden", "false");
       }
-      await navigator.share({
-        files: [file],
-        title: "Libremotor Hub update",
-        text: "Libremotor Hub rescue update APK"
+    }
+
+    async function downloadWithPicker(button) {
+      const url = button.dataset.download;
+      const suggestedName = button.dataset.name || url.split("/").pop() || "Libremotor.apk";
+      const statusElement = document.getElementById(button.dataset.statusTarget) || button.closest(".package-row, .probe-row, .step")?.querySelector(".row-status, .status");
+      const progressElement = button.closest(".step")?.querySelector(".progress");
+      const progressBar = progressElement?.querySelector("span");
+      const originalLabel = button.textContent;
+
+      if (!("showSaveFilePicker" in window)) {
+        setStatus(statusElement, "Save Picker is unavailable in this browser.", "error");
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "Choose location…";
+      if (progressElement) progressElement.classList.remove("visible");
+      if (progressBar) progressBar.style.width = "0%";
+      setStatus(statusElement, "Choose a folder and tap Save.");
+
+      try {
+        // The picker is deliberately opened before fetch so the call remains inside the user gesture.
+        const handle = await showSavePicker({
+          id: PICKER_ID,
+          suggestedName,
+          startIn: pickerStartHandle(),
+          types: apkPickerTypes(),
+          excludeAcceptAllOption: false
+        });
+
+        lastSavedHandle = handle;
+        button.textContent = "Downloading…";
+        if (progressElement) progressElement.classList.add("visible");
+        setStatus(statusElement, "Downloading and writing the APK…");
+
+        const response = await fetch(url, { cache: "no-store", credentials: "same-origin" });
+        if (!response.ok) throw new Error(`Download failed: HTTP ${response.status}`);
+
+        const bytes = await writeResponseToHandle(response, handle, progressElement, (received, total) => {
+          if (progressBar && total > 0) {
+            progressBar.style.width = `${Math.min(100, (received / total) * 100)}%`;
+          }
+          setStatus(
+            statusElement,
+            total > 0
+              ? `Downloading ${Math.round((received / total) * 100)}% · ${formatBytes(received)} of ${formatBytes(total)}`
+              : `Downloading · ${formatBytes(received)}`
+          );
+        });
+
+        if (progressBar) progressBar.style.width = "100%";
+        setStatus(statusElement, `Saved ${handle.name || suggestedName} (${formatBytes(bytes)}). Now tap “Install saved APK”.`);
+        installButton.classList.add("install-ready");
+        document.getElementById("install-step").scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => installButton.classList.remove("install-ready"), 3200);
+      } catch (error) {
+        if (error && error.name === "AbortError") {
+          setStatus(statusElement, "Download cancelled.", "warning");
+        } else {
+          setStatus(statusElement, error?.message || String(error), "error");
+        }
+      } finally {
+        button.disabled = false;
+        button.textContent = originalLabel;
+      }
+    }
+
+    async function openInstallerPicker(startHandle) {
+      if (!("showOpenFilePicker" in window)) {
+        setStatus(installStatus, "Open File Picker is unavailable in this browser.", "error");
+        return;
+      }
+
+      installButton.disabled = true;
+      setStatus(
+        installStatus,
+        "DocumentsUI is opening. Navigate to the APK, then tap the Expand / open-in-Files icon—do not select the APK normally."
+      );
+
+      const options = {
+        id: PICKER_ID,
+        multiple: false,
+        startIn: startHandle || pickerStartHandle(),
+        types: apkPickerTypes(),
+        excludeAcceptAllOption: false
+      };
+
+      try {
+        const handles = await showOpenPicker(options);
+        const handle = handles && handles[0];
+        if (handle) {
+          const file = await handle.getFile();
+          setStatus(
+            installStatus,
+            `You selected ${file.name} inside the picker. That only returns the file to Vivaldi. Tap Install again and use the Expand / open-in-Files icon instead.`,
+            "warning"
+          );
+        }
+      } catch (error) {
+        if (error && error.name === "AbortError") {
+          setStatus(
+            installStatus,
+            "Picker closed. If Package Installer opened, continue there. Otherwise tap Install again and use the Expand icon.",
+            "warning"
+          );
+        } else {
+          setStatus(installStatus, error?.message || String(error), "error");
+        }
+      } finally {
+        installButton.disabled = false;
+      }
+    }
+
+    function renderOtherPackages() {
+      const container = document.getElementById("other-packages");
+      otherPackages.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "package-row";
+
+        const meta = document.createElement("div");
+        meta.className = "package-meta";
+        const title = document.createElement("strong");
+        title.textContent = item.title;
+        const packageName = document.createElement("code");
+        packageName.textContent = item.packageName;
+        const filename = document.createElement("small");
+        filename.textContent = item.filename;
+        meta.append(title, packageName, filename);
+
+        const button = document.createElement("button");
+        button.className = "button secondary compact";
+        button.type = "button";
+        button.textContent = "Download";
+        button.dataset.download = item.url;
+        button.dataset.name = item.filename;
+
+        const status = document.createElement("p");
+        status.className = "row-status";
+
+        row.append(meta, button, status);
+        container.append(row);
       });
     }
 
-    document.querySelectorAll("[data-save]").forEach((button) => {
-      button.addEventListener("click", async () => {
-        status.textContent = "Opening file picker...";
-        try {
-          await saveWithPicker(button.dataset.save, button.dataset.name);
-          status.textContent = "Saved. Open the saved APK from Android downloads/files if the installer does not launch automatically.";
-        } catch (error) {
-          status.textContent = `${error.message} Use the regular download button.`;
+    function probePackageName(filename) {
+      return filename.replace(/--probe\.apk$/i, "").replaceAll("_", ".");
+    }
+
+    function renderProbes(filter) {
+      const container = document.getElementById("probe-list");
+      const normalized = (filter || "").trim().toLowerCase();
+      container.textContent = "";
+
+      probes
+        .filter((filename) => probePackageName(filename).toLowerCase().includes(normalized))
+        .forEach((filename) => {
+          const row = document.createElement("div");
+          row.className = "probe-row";
+
+          const meta = document.createElement("div");
+          meta.className = "package-meta";
+          const packageName = document.createElement("code");
+          packageName.textContent = probePackageName(filename);
+          const file = document.createElement("small");
+          file.textContent = filename;
+          meta.append(packageName, file);
+
+          const button = document.createElement("button");
+          button.className = "button secondary compact";
+          button.type = "button";
+          button.textContent = "Download";
+          button.dataset.download = `./downloads/probes/${filename}`;
+          button.dataset.name = filename;
+
+          const status = document.createElement("p");
+          status.className = "row-status";
+
+          row.append(meta, button, status);
+          container.append(row);
+        });
+    }
+
+    async function listDirectory(handle) {
+      const fileList = document.getElementById("file-list");
+      const folderPath = document.getElementById("folder-path");
+      const directoryStatus = document.getElementById("directory-status");
+      const backButton = document.getElementById("directory-back");
+
+      fileList.textContent = "";
+      folderPath.textContent = directoryStack.map((entry) => entry.name).join(" / ");
+      backButton.disabled = directoryStack.length <= 1;
+      setStatus(directoryStatus, "Reading folder…");
+
+      try {
+        const entries = [];
+        for await (const entry of handle.values()) entries.push(entry);
+        entries.sort((a, b) => {
+          if (a.kind !== b.kind) return a.kind === "directory" ? -1 : 1;
+          return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+        });
+
+        for (const entry of entries) {
+          const row = document.createElement("div");
+          row.className = `file-row ${entry.kind === "directory" ? "folder" : "file"}`;
+
+          const main = document.createElement("div");
+          main.className = "file-main";
+          const kind = document.createElement("span");
+          kind.className = "file-kind";
+          kind.textContent = entry.kind === "directory" ? "DIR" : entry.name.toLowerCase().endsWith(".apk") ? "APK" : "FILE";
+          const meta = document.createElement("div");
+          meta.className = "package-meta";
+          const name = document.createElement("strong");
+          name.className = "file-name";
+          name.textContent = entry.name;
+          meta.append(name);
+          main.append(kind, meta);
+
+          if (entry.kind === "directory") {
+            const action = document.createElement("button");
+            action.className = "button secondary compact";
+            action.type = "button";
+            action.textContent = "Open";
+            action.addEventListener("click", async () => {
+              directoryStack.push(entry);
+              preferredDirectoryHandle = entry;
+              await listDirectory(entry);
+            });
+            row.addEventListener("dblclick", () => action.click());
+            row.append(main, action);
+          } else {
+            try {
+              const file = await entry.getFile();
+              const details = document.createElement("small");
+              details.textContent = `${file.type || "unknown type"} · ${formatBytes(file.size)}`;
+              meta.append(details);
+            } catch (_) {
+              // Metadata is optional; keep the file visible if it cannot be read.
+            }
+
+            if (entry.name.toLowerCase().endsWith(".apk")) {
+              const action = document.createElement("button");
+              action.className = "button secondary compact";
+              action.type = "button";
+              action.textContent = "Install";
+              action.addEventListener("click", () => openInstallerPicker(handle));
+              row.append(main, action);
+            } else {
+              row.append(main);
+            }
+          }
+
+          fileList.append(row);
         }
-      });
+
+        setStatus(directoryStatus, `${entries.length} item${entries.length === 1 ? "" : "s"}. APK rows use the same proven installer-picker bridge.`);
+      } catch (error) {
+        setStatus(directoryStatus, error?.message || String(error), "error");
+      }
+    }
+
+    async function chooseDirectory() {
+      const directoryStatus = document.getElementById("directory-status");
+      if (!("showDirectoryPicker" in window)) {
+        setStatus(directoryStatus, "Directory Picker is unavailable in this browser.", "error");
+        return;
+      }
+
+      try {
+        const options = { id: "libremotor-c10-browser", mode: "read", startIn: pickerStartHandle() };
+        let handle;
+        try {
+          handle = await window.showDirectoryPicker(options);
+        } catch (error) {
+          if (error && error.name === "TypeError") {
+            handle = await window.showDirectoryPicker({ mode: "read" });
+          } else {
+            throw error;
+          }
+        }
+
+        preferredDirectoryHandle = handle;
+        directoryStack = [handle];
+        await listDirectory(handle);
+      } catch (error) {
+        if (error && error.name === "AbortError") {
+          setStatus(directoryStatus, "Directory selection cancelled.", "warning");
+        } else {
+          setStatus(directoryStatus, error?.message || String(error), "error");
+        }
+      }
+    }
+
+    function checkSupport() {
+      const missing = [];
+      if (!window.isSecureContext) missing.push("the page is not running in a secure HTTPS context");
+      if (!("showSaveFilePicker" in window)) missing.push("showSaveFilePicker is unavailable");
+      if (!("showOpenFilePicker" in window)) missing.push("showOpenFilePicker is unavailable");
+
+      if (missing.length) {
+        supportBanner.textContent = `This rescue flow cannot run completely because ${missing.join("; ")}.`;
+        supportBanner.classList.add("visible");
+      }
+    }
+
+    document.addEventListener("click", (event) => {
+      const downloadButton = event.target.closest("[data-download]");
+      if (downloadButton) {
+        downloadWithPicker(downloadButton);
+        return;
+      }
+
+      const copyButton = event.target.closest("[data-copy]");
+      if (copyButton) {
+        const rowStatus = copyButton.closest(".package-row")?.querySelector(".row-status");
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+          navigator.clipboard.writeText(copyButton.dataset.copy)
+            .then(() => setStatus(rowStatus, "URL copied."))
+            .catch(() => setStatus(rowStatus, copyButton.dataset.copy, "warning"));
+        } else {
+          setStatus(rowStatus, copyButton.dataset.copy, "warning");
+        }
+      }
     });
 
-    document.querySelectorAll("[data-share]").forEach((button) => {
-      button.addEventListener("click", async () => {
-        status.textContent = "Preparing APK share...";
-        try {
-          await shareApk(button.dataset.share, button.dataset.name);
-          status.textContent = "Share sheet opened. Pick Package Installer or another installer-capable app if available.";
-        } catch (error) {
-          status.textContent = `${error.message} Use Download APK and tap the completed browser download.`;
-        }
-      });
+    installButton.addEventListener("click", () => openInstallerPicker());
+    document.getElementById("choose-directory").addEventListener("click", chooseDirectory);
+
+    document.getElementById("directory-back").addEventListener("click", async () => {
+      if (directoryStack.length <= 1) return;
+      directoryStack.pop();
+      const handle = directoryStack[directoryStack.length - 1];
+      preferredDirectoryHandle = handle;
+      await listDirectory(handle);
     });
 
-    document.querySelectorAll("[data-copy]").forEach((button) => {
-      button.addEventListener("click", async () => {
-        try {
-          await navigator.clipboard.writeText(button.dataset.copy);
-          status.textContent = "Downloader URL copied.";
-        } catch (error) {
-          status.textContent = button.dataset.copy;
-        }
-      });
+    document.getElementById("check-capabilities").addEventListener("click", () => {
+      const status = document.getElementById("directory-status");
+      setStatus(status, [
+        `secure context: ${window.isSecureContext ? "yes" : "no"}`,
+        `save picker: ${"showSaveFilePicker" in window ? "yes" : "no"}`,
+        `open picker: ${"showOpenFilePicker" in window ? "yes" : "no"}`,
+        `directory picker: ${"showDirectoryPicker" in window ? "yes" : "no"}`
+      ].join(" · "));
     });
 
-    const list = document.getElementById("probe-list");
-    probes.forEach((file) => {
-      const row = document.createElement("div");
-      row.className = "probe-row";
-      const name = document.createElement("code");
-      name.textContent = file.replace("--probe.apk", "").replaceAll("_", ".");
-      const link = document.createElement("a");
-      link.className = "button secondary";
-      link.href = `./downloads/probes/${file}`;
-      link.download = file;
-      link.textContent = "Download";
-      row.append(name, link);
-      list.append(row);
+    document.getElementById("probe-search").addEventListener("input", (event) => {
+      renderProbes(event.target.value);
     });
+
+    renderOtherPackages();
+    renderProbes("");
+    checkSupport();
   </script>
 </body>
 </html>
