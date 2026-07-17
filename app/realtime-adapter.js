@@ -13,6 +13,16 @@
     return source || (locale === "pt" ? "Indisponível" : "Unavailable");
   }
 
+  function normalizeBattery12VSignal(value) {
+    const raw = Number(value);
+    if (!Number.isFinite(raw)) return null;
+    if (raw >= 6 && raw <= 18) return raw;
+    if (raw >= 60 && raw <= 180) return raw / 10;
+    if (raw >= 600 && raw <= 1800) return raw / 100;
+    if (raw >= 6000 && raw <= 18000) return raw / 1000;
+    return null;
+  }
+
   function adaptStatus(status) {
     if (!status || typeof status !== "object" || Array.isArray(status)) return status;
 
@@ -23,6 +33,7 @@
       ? status.capabilities
       : {};
     const vehicleServices = capabilities.vehicle_services || telemetry.vehicleServices || {};
+    const battery12v = normalizeBattery12VSignal(telemetry.battery12v ?? telemetry.battery12V);
     const sourceUpdatedAt = status.source === "hub_autosdk"
       ? status.hub_updated_at
       : status.cloud_updated_at || status.updated_at;
@@ -35,6 +46,8 @@
       },
       telemetry: {
         ...telemetry,
+        battery12v,
+        battery12V: battery12v,
         source: status.source || telemetry.source || "unavailable",
         connectedVia: status.connected_via || "",
         freshness: status.freshness || {},
@@ -127,7 +140,7 @@
   window.addEventListener("DOMContentLoaded", updateSourceBadges, { once: true });
 
   window.__LIBREMOTOR_REALTIME_ADAPTER__ = {
-    version: "2026.07.16",
+    version: "2026.07.17",
     adaptStatus,
   };
 })();

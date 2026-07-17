@@ -35,6 +35,19 @@
   white-space: nowrap;
 }
 
+.drawer {
+  z-index: 1000;
+}
+
+.trips-fit-screen.empty {
+  grid-template-columns: minmax(0, 720px);
+  justify-content: center;
+}
+
+.trips-fit-screen.empty .trip-list-card {
+  width: 100%;
+}
+
 @media (min-width: 1180px) {
   .status-screen {
     display: grid;
