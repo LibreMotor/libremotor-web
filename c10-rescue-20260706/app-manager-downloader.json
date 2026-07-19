@@ -1,7 +1,7 @@
 {
-  "download_url": "https://libremotor.com/c10-rescue-20260706/downloads/LibremotorAppManagerDownloader-2026.07.06.apk",
-  "created_at": "2026-07-06T00:00:00",
+  "download_url": "https://libremotor.com/c10-rescue-20260706/downloads/LibremotorSources-2026.07.19.apk",
+  "created_at": "2026-07-19T00:00:00",
   "signature_download_url": null,
-  "description": "Libremotor App Manager installer downloader. Add this URL in Hub Settings > Downloads > Downloaders.",
-  "version": "2026.07.06-app-manager-downloader"
+  "description": "Legacy metadata alias for the official Libremotor app-source plug-in and Hub rescue updater.",
+  "version": "2026.07.19-sources"
 }

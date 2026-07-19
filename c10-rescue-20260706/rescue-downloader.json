@@ -2,6 +2,6 @@
   "download_url": "https://libremotor.com/c10-rescue-20260706/downloads/LibremotorRescueInstaller-2026.07.07.apk",
   "created_at": "2026-07-06T00:00:00",
   "signature_download_url": null,
-  "description": "Libremotor Rescue Installer. Adds a launcher app that can update the Hub or install App Manager without File Manager.",
+  "description": "Libremotor Rescue Installer. Adds a launcher app that can update the installed Hub without File Manager.",
   "version": "2026.07.07-rescue-installer"
 }
